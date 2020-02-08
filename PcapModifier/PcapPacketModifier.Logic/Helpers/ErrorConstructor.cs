@@ -8,10 +8,10 @@ namespace PcapPacketModifier.Logic.Helpers
     public static class ErrorConstructor
     {
         /// <summary>
-        /// Simply constructs error message 
+        /// Constructs error message exception, primarly for log
         /// </summary>
         /// <param name="exception">Exception to work with</param>
-        /// <returns>String error woth all data neded</returns>
+        /// <returns>String error with all data neded</returns>
         public static string ConstructErrorMessageFromException(Exception exception)
         {
             if (exception is null)

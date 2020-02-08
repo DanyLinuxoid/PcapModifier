@@ -6,7 +6,7 @@ using System;
 namespace PcapPacketModifier.Logic.Factories
 {
     /// <summary>
-    /// Responsible for simple instances creation of provided type and with provided values
+    /// Responsible for simple instance creation of provided type and with provided values
     /// </summary>
     public class GenericInstanceCreator : IGenericInstanceCreator
     {

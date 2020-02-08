@@ -28,7 +28,7 @@ namespace PcapPacketModifier.Logic.Modules
         }
 
         /// <summary>
-        /// Logic to modify layer properties in library class, as we cannot normally create valid copy of object from library in order
+        /// Logic to modify layer properties in library class, as we cannot normally create valid copy of object from library, in order
         /// to modify it normally (cannot assign interfaces, etc). 
         /// Object properties are modified by using reflection on public {get; set;} methods, all others are untouched.
         /// </summary>

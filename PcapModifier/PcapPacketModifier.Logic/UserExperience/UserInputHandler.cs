@@ -164,7 +164,7 @@ namespace PcapPacketModifier.Logic.UserExperience
         /// Contains checks for specific enum, which are not normally mapping, and cannot be determined in other way.
         /// </summary>
         /// <param name="propertyType"></param>
-        /// <returns></returns>
+        /// <returns>Type of enum and string with parameters</returns>
         private (Type, string[]) CheckIfSpecificEnumAndReturnTypeWithParametersToPrint(Type propertyType)
         {
             if (propertyType == typeof(IpV4Fragmentation))

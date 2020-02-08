@@ -5,7 +5,7 @@ using PcapPacketModifier.Userdata.User;
 namespace PcapPacketModifier
 {
     /// <summary>
-    /// Top of the program clases, provides only mechanism to start program
+    /// Top class of the program, provides only mechanism to start program
     /// </summary>
     public class ProgramManager : IProgramManager
     {

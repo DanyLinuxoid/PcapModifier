@@ -22,7 +22,7 @@ namespace PcapPacketModifier.Logic.Modules
         }
 
         /// <summary>
-        /// Determines type of modulle and redirects to method to handle that module
+        /// Determines type of module and redirects to method to handle that module
         /// </summary>
         /// <param name="type">Type of module</param>
         /// <param name="userInput">User input</param>
@@ -58,7 +58,7 @@ namespace PcapPacketModifier.Logic.Modules
         }
 
         /// <summary>
-        /// Handles structs, creates instance of struct or just parses to type, depends on struct type
+        /// Handles structs, creates instance of struct or just parses input to type, depends on struct 
         /// </summary>
         /// <param name="type">Type of struct</param>
         /// <param name="userInput">User input</param>

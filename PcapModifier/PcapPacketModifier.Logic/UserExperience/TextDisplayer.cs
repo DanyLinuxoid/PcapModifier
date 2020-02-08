@@ -199,7 +199,7 @@ namespace PcapPacketModifier.Logic.UserExperience
         /// <summary>
         /// Displays all network interfaces on local machine to user
         /// </summary>
-        /// <param name="devices"></param>
+        /// <param name="devices">Registered devices on local machine</param>
         public void DisplayAllLocalMachineNetworkInterfaces(IList<LivePacketDevice> devices)
         {
             ClearConsole();

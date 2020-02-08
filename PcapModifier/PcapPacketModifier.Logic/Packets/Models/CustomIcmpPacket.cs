@@ -9,7 +9,7 @@ using PcapPacketModifier.Userdata.Packets;
 namespace PcapPacketModifier.Logic.Packets.Models
 {
     /// <summary>
-    /// Custom Tcp packet model 
+    /// Custom Icmp packet model 
     /// </summary>
     public class CustomIcmpPacket : CustomBasePacket
     {
@@ -17,12 +17,12 @@ namespace PcapPacketModifier.Logic.Packets.Models
         private readonly ILayerExtractor _layerExtractor;
 
         /// <summary>
-        /// Tcp packet contains IpV4Layer
+        /// Icmp packet contains IpV4Layer
         /// </summary>
         public IpV4Layer IpV4Layer { get; set; }
 
         /// <summary>
-        /// Tcp packet contains ethernet layer 
+        /// Icmp packet contains ethernet layer 
         /// </summary>
         public EthernetLayer EthernetLayer { get; set; }
 

@@ -1,5 +1,4 @@
-﻿using PcapPacketModifier.Logic.Logger;
-using PcapPacketModifier.Logic.Tools.Interfaces;
+﻿using PcapPacketModifier.Logic.Tools.Interfaces;
 using System;
 
 namespace PcapPacketModifier.Logic.Logger
@@ -22,7 +21,7 @@ namespace PcapPacketModifier.Logic.Logger
         }
 
         /// <summary>
-        /// Checks if file exists, if log does not exists - creates it and writes message in it.
+        /// Checks if log exists, if log does not exists - creates it and writes message in it.
         /// </summary>
         /// <param name="message">Message to write in log</param>
         public override void WriteLog(string message, string path = null)
@@ -44,7 +43,7 @@ namespace PcapPacketModifier.Logic.Logger
         }
 
         /// <summary>
-        /// Before writing to log, call this method, to ensure, that file xists, or that it can be created
+        /// Before writing to log, call this method, to ensure, that file exists, or that it can be created
         /// </summary>
         /// <param name="path">Path to file</param>
         private void CheckIfFileExistsAndTryToCreateIfNot()

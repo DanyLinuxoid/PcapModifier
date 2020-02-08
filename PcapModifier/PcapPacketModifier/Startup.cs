@@ -3,7 +3,7 @@
 namespace PcapPacketModifier
 {
     /// <summary>
-    /// Startup to process before logic will start
+    /// Startup, does preprocessing before logic will start
     /// </summary>
     public sealed class Startup : System.IDisposable
     {

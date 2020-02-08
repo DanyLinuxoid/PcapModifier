@@ -6,17 +6,17 @@ using PcapPacketModifier.Userdata.Packets;
 namespace PcapPacketModifier.Logic.Factories
 {
     /// <summary>
-    /// Simple static factory for packet creating
+    /// Simple static factory for packet creation
     /// </summary>
     public static class PacketFactory
     {
         /// <summary>
-        /// Creates packet by protocol and provided objects to constructor
+        /// Creates packet by protocol and provided input to constructor
         /// </summary>
         /// <param name="protocol">Packet protocol</param>
         /// <param name="layerExtractor">Object that responsible for layer extraction</param>
         /// <param name="layerModifier">Object that responsible for layer modification</param>
-        /// <returns>New Custom packet of provided protocol with provided objects in it</returns>
+        /// <returns>New Custom packet of provided protocol with provided values in it</returns>
         public static CustomBasePacket GetPacket(IpV4Protocol protocol,
                                                                       ILayerExtractor layerExtractor,
                                                                       ILayerModifier layerModifier)

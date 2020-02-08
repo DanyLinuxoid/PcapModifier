@@ -40,7 +40,7 @@ namespace PcapPacketModifier.Logic.Core
             Packet packet = _fileHandler.TryOpenUserPacketFromFile(inputData.PathToFile);
             if (packet == null)
             {
-                _textDisplayer.PrintTextAndExit("Error opening packet file");  
+                throw new InvalidOperationException(nameof(packet) + " was null");
             }
 
             CustomBasePacket customPacket = _packetManager.ExtractLayersFromPacket(packet);
