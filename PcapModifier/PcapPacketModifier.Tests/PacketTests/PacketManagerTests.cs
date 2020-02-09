@@ -1,7 +1,6 @@
 ﻿using System;
 using Moq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PcapDotNet.Packets;
 using PcapDotNet.Packets.Ethernet;
 using UnitTests.Shared.DummyObjects.Packets;
@@ -11,20 +10,21 @@ using PcapPacketModifier.Logic.Sender.Interfaces;
 using PcapPacketModifier.Logic.Packets.Interfaces;
 using PcapPacketModifier.Logic.Packets;
 using PcapPacketModifier.Logic.Packets.Models;
+using NUnit.Framework;
 
 namespace UnitTests.PacketTests
 {
-    [TestClass]
     public class PacketManagerTests
     {
-        private readonly Mock<ILayerManager> _layerManagerMock;
-        private readonly Mock<ILayerExtractor> _layerExtractor;
-        private readonly Mock<ILayerModifier >_layerModifier;
-        private readonly Mock<IPacketSender> _packetSenderMock;
-        private readonly IDummyPacketBuilder _dummyPacketBuilder;
-        private readonly IPacketManager _target;
+        private Mock<ILayerManager> _layerManagerMock;
+        private Mock<ILayerExtractor> _layerExtractor;
+        private Mock<ILayerModifier >_layerModifier;
+        private Mock<IPacketSender> _packetSenderMock;
+        private IDummyPacketBuilder _dummyPacketBuilder;
+        private IPacketManager _target;
 
-        public PacketManagerTests()
+        [SetUp]
+        public void Setup()
         {
             _layerManagerMock = new Mock<ILayerManager>();
             _layerExtractor = new Mock<ILayerExtractor>();
@@ -34,7 +34,7 @@ namespace UnitTests.PacketTests
             _target = new PacketManager(_layerManagerMock.Object, _packetSenderMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractLayersFromPacket_PacketIsNull_ThrowsError()
         {
             // Act
@@ -44,7 +44,7 @@ namespace UnitTests.PacketTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractLayersFromPacket_PacketIsOk_ReturnsCustomPacket()
         {
             // Arrange

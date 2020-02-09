@@ -1,27 +1,27 @@
 ﻿using System;
 using Moq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PcapDotNet.Packets.Transport;
 using PcapPacketModifier.Logic.Modules.Interfaces;
 using PcapPacketModifier.Logic.Layers.Interfaces;
 using PcapPacketModifier.Logic.Layers;
+using NUnit.Framework;
 
 namespace UnitTests.LayerTests
 {
-    [TestClass]
     public class LayerModifierTests
     {
-        private readonly Mock<IModuleModifier> _moduleModifierMock;
-        private readonly ILayerModifier _target;
+        private Mock<IModuleModifier> _moduleModifierMock;
+        private ILayerModifier _target;
 
-        public LayerModifierTests()
+        [SetUp]
+        public void Setup()
         {
             _moduleModifierMock = new Mock<IModuleModifier>();
             _target = new LayerModifier(_moduleModifierMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void ModifyLayer_LayerIsNull_ExceptionIsThrown()
         {
             // Act
@@ -31,7 +31,7 @@ namespace UnitTests.LayerTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void ModifyLayer_LayerIsOk_ReturnsModifiedLayer()
         {
             // Arrange

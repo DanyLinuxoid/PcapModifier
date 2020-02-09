@@ -1,23 +1,23 @@
 ﻿using System;
 using Moq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PcapDotNet.Packets.IpV4;
 using PcapDotNet.Packets.Ethernet;
 using PcapPacketModifier.Logic.Factories.Interfaces;
 using PcapPacketModifier.Logic.Modules.StructHandlers.Interfaces;
 using PcapPacketModifier.Logic.Modules.StructHandlers;
+using NUnit.Framework;
 
 namespace UnitTests.ModuleTests.StructHandlersTests
 {
-    [TestClass]
     public class ModuleStructHandlerTests
     {
-        private readonly Mock<IGenericInstanceCreator> _genericInstanceCreator;
-        private readonly Mock<IModuleStructArgumentsHandler> _moduleStructArgumentsHandler;
-        private readonly IModuleStructHandler _target;
+        private Mock<IGenericInstanceCreator> _genericInstanceCreator;
+        private Mock<IModuleStructArgumentsHandler> _moduleStructArgumentsHandler;
+        private IModuleStructHandler _target;
 
-        public ModuleStructHandlerTests()
+        [SetUp]
+        public void Setup()
         {
             _genericInstanceCreator = new Mock<IGenericInstanceCreator>();
             _moduleStructArgumentsHandler = new Mock<IModuleStructArgumentsHandler>();
@@ -25,7 +25,7 @@ namespace UnitTests.ModuleTests.StructHandlersTests
                                                                 _moduleStructArgumentsHandler.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void CheckIfTypeIsCommonStructAndReturnObject_IsValidType_ReturnsParsedValue()
         {
             // Arrange
@@ -38,7 +38,7 @@ namespace UnitTests.ModuleTests.StructHandlersTests
             result.Should().BeOfType<int>();
         }
 
-        [TestMethod]
+        [Test]
         public void CheckIfTypeIsCommonStructAndReturnObject_IsValidNullableType_ReturnsParsedValue()
         {
             // Arrange
@@ -51,7 +51,7 @@ namespace UnitTests.ModuleTests.StructHandlersTests
             result.Should().BeOfType<int>();
         }
 
-        [TestMethod]
+        [Test]
         public void CheckIfTypeIsCommonStructAndReturnObject_IsInvalidStruct_ReturnsNull()
         {
             // Arrange
@@ -64,7 +64,7 @@ namespace UnitTests.ModuleTests.StructHandlersTests
             result.Should().BeNull();
         }
 
-        [TestMethod]
+        [Test]
         public void CheckIfStructMustHaveArgumentsAndReturnObject_IsInvalidStruct_ReturnsNull()
         {
             // Arrange
@@ -77,7 +77,7 @@ namespace UnitTests.ModuleTests.StructHandlersTests
             result.Should().BeNull();
         }
 
-        [TestMethod]
+        [Test]
         public void CheckIfStructMustHaveArgumentsAndReturnObject_IsValidStructWithOneArgument_ReturnsObject()
         {
             // Arrange
@@ -95,7 +95,7 @@ namespace UnitTests.ModuleTests.StructHandlersTests
             result.Should().BeOfType<MacAddress>();
         }
 
-        [TestMethod]
+        [Test]
         public void CheckIfStructMustHaveArgumentsAndReturnObject_IsValidStructWithManyArguments_ReturnsObject()
         {
             // Arrange
@@ -119,7 +119,7 @@ namespace UnitTests.ModuleTests.StructHandlersTests
             result.GetType().GetProperty("Options").GetValue(result).Should().Be(options);
         }
 
-        [TestMethod]
+        [Test]
         public void CheckIfStructMustHaveArgumentsAndReturnObject_InvalidType_ReturnsObject()
         {
             // Act

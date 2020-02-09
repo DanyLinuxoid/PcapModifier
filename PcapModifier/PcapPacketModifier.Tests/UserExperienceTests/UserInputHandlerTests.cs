@@ -1,29 +1,29 @@
 ﻿using System;
 using Moq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 using UnitTests.Shared.DummyObjects.Classes;
 using PcapPacketModifier.Logic.UserExperience.Interfaces;
 using PcapPacketModifier.Logic.UserExperience;
+using NUnit.Framework;
 
 namespace UnitTests.UserExperienceTests
 {
-    [TestClass]
     public class UserInputHandlerTests
     {
-        private readonly Mock<ITextDisplayer> _textDisplayerMock;
-        private readonly Mock<IConsoleWrapper> _consoleWrapperMock;
-        private readonly IUserInputHandler _target;
+        private Mock<ITextDisplayer> _textDisplayerMock;
+        private Mock<IConsoleWrapper> _consoleWrapperMock;
+        private IUserInputHandler _target;
 
-        public UserInputHandlerTests()
+        [SetUp]
+        public void Setup()
         {
             _textDisplayerMock = new Mock<ITextDisplayer>();
             _consoleWrapperMock = new Mock<IConsoleWrapper>();
             _target = new UserInputHandler(_textDisplayerMock.Object, _consoleWrapperMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void YesNoAbort_YIsPressed_ReturnsTrue()
         {
             // Arrange
@@ -36,7 +36,7 @@ namespace UnitTests.UserExperienceTests
             result.Should().BeTrue();
         }
 
-        [TestMethod]
+        [Test]
         public void YesNoAbort_AIsPressed_ReturnsTrue()
         {
             // Arrange
@@ -49,7 +49,7 @@ namespace UnitTests.UserExperienceTests
             result.Should().BeFalse();
         }
 
-        [TestMethod]
+        [Test]
         public void AskUserInputWhileInputContainsPatterns_PropertyIsNull_ErrorThrows()
         {
             // Act
@@ -59,7 +59,7 @@ namespace UnitTests.UserExperienceTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void AskUserInputWhileInputContainsPatterns_UserInputDoesNotContainsPatterns_NoLoop()
         {
             // Arrange
@@ -76,7 +76,7 @@ namespace UnitTests.UserExperienceTests
             result.Should().BeEquivalentTo(userInput);
         }
 
-        [TestMethod]
+        [Test]
         public void GetUserInput_SomeInputIsProvided_InputIsReturned()
         {
             // Arrange
@@ -91,7 +91,7 @@ namespace UnitTests.UserExperienceTests
             result.Should().BeEquivalentTo(userInput);
         }
 
-        [TestMethod]
+        [Test]
         public void IsUserInputContainingSpecificPattern_PropertyIsNull_ExceptionThrows()
         {
             // Act
@@ -101,7 +101,7 @@ namespace UnitTests.UserExperienceTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void IsUserInputContainingSpecificPattern_UserInputContainsH_ReturnsTrue()
         {
             // Arrange
@@ -116,7 +116,7 @@ namespace UnitTests.UserExperienceTests
             result.Should().BeTrue();
         }
 
-        [TestMethod]
+        [Test]
         public void IsUserInputContainingSpecificPattern_UserInputDoesNotContainsPatterns_ReturnsFalse()
         {
             // Arrange

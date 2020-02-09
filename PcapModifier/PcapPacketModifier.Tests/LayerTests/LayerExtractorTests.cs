@@ -1,6 +1,5 @@
 ﻿using System;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PcapDotNet.Packets;
 using PcapDotNet.Packets.Transport;
 using PcapDotNet.Packets.Ethernet;
@@ -10,19 +9,20 @@ using UnitTests.Shared.DummyObjects.Layers;
 using PcapPacketModifier.Logic.Layers.Interfaces;
 using PcapPacketModifier.Logic.Layers;
 using PcapDotNet.Packets.Icmp;
+using NUnit.Framework;
 
 namespace UnitTests.LayerTests
 {
-    [TestClass]
     public class LayerExtractorTests
     {
-        private readonly ILayerExtractor _target;
-        private readonly IDummyPacketBuilder _dummyPacketBuilder;
-        private readonly Packet _dummyPacket;
-        private readonly Packet _udpDummyPacket;
-        private readonly Packet _icmpDummyPacket;
+        private ILayerExtractor _target;
+        private IDummyPacketBuilder _dummyPacketBuilder;
+        private Packet _dummyPacket;
+        private Packet _udpDummyPacket;
+        private Packet _icmpDummyPacket;
 
-        public LayerExtractorTests()
+        [SetUp]
+        public void Setup()
         {
             _target = new LayerExtractor();
             _dummyPacketBuilder = new DummyPacketBuilder(new DummyLayerCreator());
@@ -31,7 +31,7 @@ namespace UnitTests.LayerTests
             _icmpDummyPacket = _dummyPacketBuilder.GetDummyIcmpEchoRequestPacket();
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractTcpLayerFromPacket_PacketIsNull_ThrowsError()
         {
             // Act
@@ -41,7 +41,7 @@ namespace UnitTests.LayerTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractTcpLayerFromPacket_TcpLayerIsNull_ThrowsError()
         {
             // Arrange
@@ -54,7 +54,7 @@ namespace UnitTests.LayerTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractTcpLayerFromPacket_PacketIsOk_ReturnsTcpLayer()
         {
             // Act
@@ -67,7 +67,7 @@ namespace UnitTests.LayerTests
             result.DestinationPort.Should().Be(_dummyPacket.Ethernet.IpV4.Tcp.DestinationPort);
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractEthernetLayerFromPacket_PacketIsNull_ThrowsError()
         {
             // Act
@@ -77,7 +77,7 @@ namespace UnitTests.LayerTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractEthernetLayerFromPacket_PacketIsOk_ReturnsEthernetLayer()
         {
             // Act
@@ -91,7 +91,7 @@ namespace UnitTests.LayerTests
             result.EtherType.Should().Be(_dummyPacket.Ethernet.EtherType);
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractIpV4LayerFromPacket_PacketIsNull_ThrowsError()
         {
             // Act
@@ -101,7 +101,7 @@ namespace UnitTests.LayerTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractIpv4LayerFromPacket_PacketIsOk_ReturnsIpv4Layer()
         {
             // Act
@@ -120,7 +120,7 @@ namespace UnitTests.LayerTests
             result.TypeOfService.Should().Be(_dummyPacket.Ethernet.IpV4.TypeOfService);
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractPayloadLayerFromPacket_PacketIsNull_ThrowsError()
         {
             // Act
@@ -130,7 +130,7 @@ namespace UnitTests.LayerTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractPayloadLayerFromPacket_PacketIsOk_ReturnsPayloadLayer()
         {
             // Act
@@ -141,7 +141,7 @@ namespace UnitTests.LayerTests
             result.Data.Should().BeEquivalentTo(_dummyPacket.Ethernet.Payload);
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractUdpLayerFromPacket_PacketIsNull_ThrowsError()
         {
             // Act
@@ -151,7 +151,7 @@ namespace UnitTests.LayerTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractUdpLayerFromPacket_PacketIsOk_ReturnsUdpLayer()
         {
             // Act
@@ -166,7 +166,7 @@ namespace UnitTests.LayerTests
             result.DestinationPort.Should().Be(_udpDummyPacket.Ethernet.IpV4.Udp.DestinationPort);
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractIcmpLayerFromPacket_PacketIsNull_ThrowsError()
         {
             // Act
@@ -176,7 +176,7 @@ namespace UnitTests.LayerTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void ExtractIcmpLayerFromPacket_PacketIsOk_ReturnsIcmpLayer()
         {
             // Act

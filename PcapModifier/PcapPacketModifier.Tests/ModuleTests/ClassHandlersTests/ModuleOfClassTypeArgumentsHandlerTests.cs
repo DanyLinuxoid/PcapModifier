@@ -1,22 +1,22 @@
 ﻿using System.Text;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using PcapPacketModifier.Logic.Modules.ClassHandlers;
 using PcapPacketModifier.Logic.Modules.ClassHandlers.Interfaces;
 
 namespace UnitTests.ModuleTests.ClassHandlersTests
 {
-    [TestClass]
     public class ModuleOfClassTypeArgumentsHandlerTests
     {
-        private readonly IModuleClassTypeArgumentsHandler _target;
-        
-        public ModuleOfClassTypeArgumentsHandlerTests()
+        private IModuleClassTypeArgumentsHandler _target;
+
+        [SetUp]
+        public void Setup()
         {
             _target = new ModuleClassTypeArgumentsHandler();
         }
 
-        [TestMethod]
+        [Test]
         public void GetArgumentsForDatagramFromUserInput_IsValidEncoding_ReturnsBytes()
         {
             // Arrange

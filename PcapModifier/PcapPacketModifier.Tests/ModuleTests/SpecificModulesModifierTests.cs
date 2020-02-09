@@ -2,24 +2,24 @@
 using System.Text;
 using Moq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PcapDotNet.Packets;
 using PcapDotNet.Packets.IpV4;
 using PcapPacketModifier.Logic.Modules.ClassHandlers.Interfaces;
 using PcapPacketModifier.Logic.Modules.StructHandlers.Interfaces;
 using PcapPacketModifier.Logic.Modules.Interfaces;
 using PcapPacketModifier.Logic.Modules;
+using NUnit.Framework;
 
 namespace UnitTests.ModuleTests
 {
-    [TestClass]
     public class SpecificModulesModifierTests
     {
-        private readonly Mock<IModuleClassTypeHandler> _moduleOfClassTypeHandlerMock;
-        private readonly Mock<IModuleStructHandler> _moduleStructHandlerMock;
-        private readonly ISpecificModulesModifier _target;
+        private Mock<IModuleClassTypeHandler> _moduleOfClassTypeHandlerMock;
+        private Mock<IModuleStructHandler> _moduleStructHandlerMock;
+        private ISpecificModulesModifier _target;
 
-        public SpecificModulesModifierTests()
+        [SetUp]
+        public void Setup()
         {
             _moduleOfClassTypeHandlerMock = new Mock<IModuleClassTypeHandler>();
             _moduleStructHandlerMock = new Mock<IModuleStructHandler>();
@@ -27,7 +27,7 @@ namespace UnitTests.ModuleTests
                                                                     _moduleOfClassTypeHandlerMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void HandleSpecificModule_TypeIsNull_ThrowsError()
         {
             // Act
@@ -37,7 +37,7 @@ namespace UnitTests.ModuleTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void HandleSpecificModule_UserInputIsNull_ThrowsError()
         {
             // Act
@@ -47,7 +47,7 @@ namespace UnitTests.ModuleTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void HandleSpecificModule_IsValidStructWIthoutArguments_ReturnsParsedValue()
         {
             // Arrange
@@ -66,7 +66,7 @@ namespace UnitTests.ModuleTests
             result.Should().BeOfType<uint>();
         }
 
-        [TestMethod]
+        [Test]
         public void HandleSpecificModule_IsValidStructWIthArguments_ReturnsParsedValue()
         {
             // Arrange
@@ -94,7 +94,7 @@ namespace UnitTests.ModuleTests
             result.GetType().GetProperty("Options").GetValue(result).Should().Be(IpV4FragmentationOptions.MoreFragments);
         }
 
-        [TestMethod]
+        [Test]
         public void HandleSpecificModule_IsValidClass_ReturnsValidClass()
         {
             // Arrange

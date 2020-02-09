@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using Moq;
 using FluentAssertions;
 using PcapDotNet.Packets.IpV4;
@@ -7,22 +6,23 @@ using UnitTests.Shared.DummyObjects.Layers;
 using PcapPacketModifier.Logic.Logger.Interfaces;
 using PcapPacketModifier.Logic.Factories.Interfaces;
 using PcapPacketModifier.Logic.Factories;
+using NUnit.Framework;
 
 namespace UnitTests.FactoryTests
 {
-    [TestClass]
     public class GenericInstanceCreatorTests
     {
-        private readonly Mock<ISimpleLogger> _simpleLoggerMock;
-        private readonly IGenericInstanceCreator _target;
+        private Mock<ISimpleLogger> _simpleLoggerMock;
+        private IGenericInstanceCreator _target;
 
-        public GenericInstanceCreatorTests()
+        [SetUp]
+        public void Setup()
         {
             _simpleLoggerMock = new Mock<ISimpleLogger>();
             _target = new GenericInstanceCreator(_simpleLoggerMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void TryCreateNewInstance_CreateObjectWithoutParameters_ReturnsCreatedObject()
         {
             // Act 
@@ -33,7 +33,7 @@ namespace UnitTests.FactoryTests
             newObject.Should().NotBeNull();
         }
 
-        [TestMethod]
+        [Test]
         public void TryCreateNewInstance_CreateObjectWithParameters_ReturnsCreatedObjectWithParameters()
         {
             // Arrange 
@@ -49,7 +49,7 @@ namespace UnitTests.FactoryTests
             createdObject.Should().NotBeNull();
         }
 
-        [TestMethod]
+        [Test]
         public void TryCreateNewInstance_BadObjectTypeNotAStructOrClass_NotThrowingError()
         {
             // Act
@@ -59,7 +59,7 @@ namespace UnitTests.FactoryTests
             createdObject.Should().NotThrow<Exception>();
         }
 
-        [TestMethod]
+        [Test]
         public void TryCreateNewInstance_BadObjectTypeNotAStructOrClass_ReturnsDefaultValueForType()
         {
             // Act

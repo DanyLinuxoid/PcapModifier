@@ -1,31 +1,30 @@
 ﻿using System;
 using Moq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PcapDotNet.Packets;
 using PcapPacketModifier.Logic.Packets.Interfaces;
 using PcapPacketModifier.Logic.Tools.Interfaces;
-using PcapPacketModifier.Logic.Layers.Interfaces;
 using PcapPacketModifier.Logic.Core;
 using PcapPacketModifier.Userdata.User;
+using NUnit.Framework;
 
 namespace UnitTests.CoreTests
 {
-    [TestClass]
     public class CoreLogicTests
     {
-        private readonly Mock<IPacketManager> _packetManagerMock;
-        private readonly Mock<IFileHandler> _fileHandlerMock;
-        private readonly ICoreLogic _target;
+        private Mock<IPacketManager> _packetManagerMock;
+        private Mock<IFileHandler> _fileHandlerMock;
+        private ICoreLogic _target;
 
-        public CoreLogicTests()
+        [SetUp]
+        public void Setup()
         {
             _packetManagerMock = new Mock<IPacketManager>();
             _fileHandlerMock = new Mock<IFileHandler>();
             _target = new CoreLogic(_packetManagerMock.Object, _fileHandlerMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void StartLogic_InputDataIsNull_ThrowsError()
         {
             // Act
@@ -35,7 +34,7 @@ namespace UnitTests.CoreTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void StartLogic_BadPacketWasReturned_ThrowsError()
         {
             // Arrange

@@ -1,27 +1,27 @@
 ﻿using System.Text;
 using Moq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests.Shared.DummyObjects.Classes;
 using PcapDotNet.Packets;
 using PcapPacketModifier.Logic.Modules.ClassHandlers.Interfaces;
 using PcapPacketModifier.Logic.Modules.ClassHandlers;
+using NUnit.Framework;
 
 namespace UnitTests.ModuleTests.ClassHandlersTests
 {
-    [TestClass]
     public class ModuleOfClassTypeHandlerTests
     {
-        private readonly Mock<IModuleClassTypeArgumentsHandler> _moduleOfClassTypeArgumentHandlerMock;
-        private readonly IModuleClassTypeHandler _target;
+        private Mock<IModuleClassTypeArgumentsHandler> _moduleOfClassTypeArgumentHandlerMock;
+        private IModuleClassTypeHandler _target;
 
-        public ModuleOfClassTypeHandlerTests()
+        [SetUp]
+        public void Setup()
         {
             _moduleOfClassTypeArgumentHandlerMock = new Mock<IModuleClassTypeArgumentsHandler>();
             _target = new ModuleClassTypeHandler(_moduleOfClassTypeArgumentHandlerMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void HandleModuleClases_InvalidClass_ReturnsNull()
         {
             // Act
@@ -31,7 +31,7 @@ namespace UnitTests.ModuleTests.ClassHandlersTests
             result.Should().BeNull();
         }
 
-        [TestMethod]
+        [Test]
         public void HandleModuleClases_ValidClass_ReturnsObject()
         {
             // Arrange

@@ -1,22 +1,22 @@
 ﻿using System;
 using Moq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests.Shared.PathProvider;
 using PcapPacketModifier.Logic.Tools.Interfaces;
 using PcapPacketModifier.Logic.Logger;
+using NUnit.Framework;
 
 namespace UnitTests.LoggerTests
 {
-    [TestClass]
     public class LoggerTests
     {
-        private readonly Mock<IFileHandler> _fileHandlerMock;
-        private readonly Mock<ITestingPathProvider> _pathProviderMock;
-        private readonly SimpleFileLogger _target;
+        private Mock<IFileHandler> _fileHandlerMock;
+        private Mock<ITestingPathProvider> _pathProviderMock;
+        private SimpleFileLogger _target;
         private string _filePath;
 
-        public LoggerTests()
+        [SetUp]
+        public void Setup()
         {
             _fileHandlerMock = new Mock<IFileHandler>();
             _target = new SimpleFileLogger(_fileHandlerMock.Object);
@@ -24,17 +24,7 @@ namespace UnitTests.LoggerTests
             _filePath = _pathProviderMock.Object.GetPathToTestLog();
         }
 
-        [TestMethod]
-        public void WriteLog_EmptyPath_PathShouldBeEmpty()
-        {
-            // Act
-            bool path = string.IsNullOrWhiteSpace(_target.Path);
-
-            // Assert
-            path.Should().BeTrue();
-        }
-
-        [TestMethod]
+        [Test]
         public void WriteLog_EmptyPath_CreatesPathForFile()
         {
             // Arrange
@@ -49,7 +39,7 @@ namespace UnitTests.LoggerTests
             _target.Path.Should().BeEquivalentTo("path");
         }
 
-        [TestMethod]
+        [Test]
         public void WriteLog_EmptyMessage_ThrowsError()
         {
             // Assert
@@ -62,7 +52,7 @@ namespace UnitTests.LoggerTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        [TestMethod]
+        [Test]
         public void WriteLog_NoLogFile_LogFileIsCreated()
         {
             // Arrange
@@ -76,7 +66,7 @@ namespace UnitTests.LoggerTests
             _target.Path.Should().BeEquivalentTo("path");
         }
 
-        [TestMethod]
+        [Test]
         public void WriteLog_NoLogFileAndFailedCreatingLogFile_ExceptionIsThrown()
         {
             // Assert

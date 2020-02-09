@@ -1,26 +1,26 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+﻿using Moq;
 using FluentAssertions;
 using PcapDotNet.Packets.IpV4;
 using PcapPacketModifier.Logic.Helpers.Interfaces;
 using PcapPacketModifier.Logic.Modules.StructHandlers.Interfaces;
 using PcapPacketModifier.Logic.Modules.StructHandlers;
+using NUnit.Framework;
 
 namespace UnitTests.ModuleTests.StructHandlersTests
 {
-    [TestClass]
     public class ModuleStructArgumentsHandlerTests
     {
-        private readonly Mock<IStringHelper> _stringModifierMock;
-        private readonly IModuleStructArgumentsHandler _target;
+        private Mock<IStringHelper> _stringModifierMock;
+        private IModuleStructArgumentsHandler _target;
 
-        public ModuleStructArgumentsHandlerTests()
+        [SetUp]
+        public void Setup()
         {
             _stringModifierMock = new Mock<IStringHelper>();
             _target = new ModuleStructArgumentsHandler(_stringModifierMock.Object);
         }
 
-        [TestMethod]
+        [Test]
         public void ConfigureParametersForIpV4Fragmentation_ParametersAreOk_ReturnsObject()
         {
             // Arrange            
@@ -38,7 +38,7 @@ namespace UnitTests.ModuleTests.StructHandlersTests
             result[1].Should().Be(80);
         }
 
-        [TestMethod]
+        [Test]
         public void ConfigureParametersForIpV4Fragmentation_ParametersAreSwapped_ReturnsNull()
         {
             var parameters = new string[2] { "80", "MoreFragments" };
@@ -53,7 +53,7 @@ namespace UnitTests.ModuleTests.StructHandlersTests
             result.Should().BeNull();
         }
 
-        [TestMethod]
+        [Test]
         public void ConfigureParametersForIpV4Fragmentation_NotEnoughParameters_ReturnsNull()
         {
             // Arrange
