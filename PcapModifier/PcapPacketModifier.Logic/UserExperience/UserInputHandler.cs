@@ -2,7 +2,6 @@
 using System.Reflection;
 using NDesk.Options;
 using PcapDotNet.Packets.IpV4;
-using PcapPacketModifier.Logic.Logger.Interfaces;
 using PcapPacketModifier.Logic.UserExperience.Interfaces;
 using PcapPacketModifier.Userdata.User;
 

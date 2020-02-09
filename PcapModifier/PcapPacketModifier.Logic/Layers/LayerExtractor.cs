@@ -24,7 +24,7 @@ namespace PcapPacketModifier.Logic.Layers
                 throw new System.ArgumentNullException(nameof(packet));
             }
 
-            if (packet.Ethernet.IpV4.Tcp == null)
+            if (packet.Ethernet.IpV4 == null)
             {
                 throw new System.ArgumentNullException(nameof(packet));
             }

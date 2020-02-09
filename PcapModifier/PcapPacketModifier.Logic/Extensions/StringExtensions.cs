@@ -29,7 +29,7 @@ namespace PcapPacketModifier.Logic.Extensions
                     case FormatException fe:
                     case OverflowException oe:
                         Console.WriteLine(ex.Message);
-                        return default(T);
+                        return null; 
 
                     default:
                         throw;

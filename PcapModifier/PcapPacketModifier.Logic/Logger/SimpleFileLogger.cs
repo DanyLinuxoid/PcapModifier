@@ -52,7 +52,7 @@ namespace PcapPacketModifier.Logic.Logger
             {
                 if (!_fileHandler.TryCreateSimpleEmptyFile(Path))
                 {
-                    throw new InvalidOperationException(nameof(Path) + " Error creating file");
+                    throw new InvalidOperationException(nameof(Path) + " - Error creating file");
                 }
             }
         }

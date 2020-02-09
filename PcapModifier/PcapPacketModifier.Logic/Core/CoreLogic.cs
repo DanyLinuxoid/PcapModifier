@@ -1,7 +1,6 @@
 ﻿using PcapDotNet.Packets;
 using PcapPacketModifier.Logic.Packets.Interfaces;
 using PcapPacketModifier.Logic.Tools.Interfaces;
-using PcapPacketModifier.Logic.UserExperience.Interfaces;
 using PcapPacketModifier.Userdata.Packets;
 using PcapPacketModifier.Userdata.User;
 using System;
@@ -15,15 +14,12 @@ namespace PcapPacketModifier.Logic.Core
     {
         private readonly IPacketManager _packetManager;
         private readonly IFileHandler _fileHandler;
-        private readonly ITextDisplayer _textDisplayer;
 
         public CoreLogic(IPacketManager packetManager,
-                                IFileHandler fileHandler,
-                                ITextDisplayer textDisplayer)
+                                IFileHandler fileHandler)
         {
             _packetManager = packetManager;
             _fileHandler = fileHandler;
-            _textDisplayer = textDisplayer;
         }
 
         /// <summary>

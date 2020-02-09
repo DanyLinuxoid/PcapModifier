@@ -37,7 +37,7 @@ namespace PcapPacketModifier.Logic.Modules
         /// <returns>Generic modified layer</returns>
         public T ChangeLayerModulesBasedOnUserInput<T>(T layer) where T : Layer
         {
-            if (layer is null)
+            if (layer == null)
             {
                 throw new ArgumentNullException(nameof(layer));
             }
