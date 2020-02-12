@@ -57,11 +57,24 @@ namespace PcapPacketModifier.Logic.UserExperience
         }
 
         /// <summary>
+        /// Displays small hint message while interception is in progress
+        /// </summary>
+        public void DisplayHintWhileInterceptionIsInProgress()
+        {
+            PrintText("Press -a to use your modifying settings on each packet");
+            PrintText("Press -m to modify packet individually\n");
+        }
+
+        /// <summary>
         /// Prints packet data, layer by layer
         /// </summary>
-        /// <param name="packet">Packet with data to print</param> //////////////// IMPLEMENT!
-        public void ShowNewPacketData(Packet packet)
+        /// <param name="packet">Packet with data to print</param>
+        public void ShowPacketBaseInfo(Packet packet)
         {
+            PrintText("Protocol: " + packet.Ethernet.IpV4.Protocol.ToString());
+            PrintText("IP Destination: " + packet.Ethernet.IpV4.Destination);
+            PrintText("MAC Destination" + packet.Ethernet.Destination);
+            PrintText("Payload: " + Encoding.ASCII.GetString(packet.Ethernet.IpV4.Payload.ToArray()) + "\n");
         }
 
         /// <summary>
@@ -203,7 +216,7 @@ namespace PcapPacketModifier.Logic.UserExperience
         public void DisplayAllLocalMachineNetworkInterfaces(IList<LivePacketDevice> devices)
         {
             ClearConsole();
-            PrintText("Choose network device to send packet");
+            PrintText("Choose network device to send packets\n");
             for(int i = 0; i < devices.Count; i++)
             {
                 PrintText($"{i + 1}." +  devices[i].Description + "\n");
@@ -216,7 +229,7 @@ namespace PcapPacketModifier.Logic.UserExperience
         /// <param name="layer">String of decoded bytes that can be displayed</param>
         public void DisplayPayloadData(PayloadLayer layer)
         {
-            PrintText("Payload: " + Encoding.ASCII.GetString(layer.Data.ToArray()));
+            PrintText("\nPayload: " + Encoding.ASCII.GetString(layer.Data.ToArray()));
         }
     }
 }

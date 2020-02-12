@@ -5,6 +5,7 @@ using PcapDotNet.Packets.IpV4;
 using PcapDotNet.Packets.Transport;
 using PcapPacketModifier.Logic.Layers.Interfaces;
 using PcapPacketModifier.Userdata.Packets;
+using PcapPacketModifier.Userdata.Packets.Interfaces;
 
 namespace PcapPacketModifier.Logic.Packets.Models
 {
@@ -46,20 +47,13 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// Builds packet and seals it
         /// </summary>
         /// <returns>Builded packet</returns>
-        public override Packet BuildPacket()
+        public override Packet BuildPacket(uint sequenceNumber)
         {
-            PreProcessLayersBeforeBuildingPacket();
-            return new PacketBuilder(this.EthernetLayer, this.IpV4Layer, this.TcpLayer, this.PayloadLayer).Build(DateTime.Now);
-        }
-
-        /// <summary>
-        /// Sets some fields in packet to default values, because in building process
-        /// they will be filled automatically, ignores user values
-        /// </summary>
-        protected override void PreProcessLayersBeforeBuildingPacket()
-        {
+            TcpLayer.SequenceNumber = sequenceNumber;
+            TcpLayer.AcknowledgmentNumber = sequenceNumber + 1;
             EthernetLayer.EtherType = EthernetType.None;
             TcpLayer.Checksum = null;
+            return new PacketBuilder(this.EthernetLayer, this.IpV4Layer, this.TcpLayer, this.PayloadLayer).Build(DateTime.Now);
         }
 
         /// <summary>
@@ -67,7 +61,7 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// </summary>
         /// <param name="packet">Packet to extract layers from</param>
         /// <returns>Cusom packet with freshly extracted layers</returns>
-        public override CustomBasePacket ExtractLayers(Packet packet)
+        public override INewPacket ExtractLayers(Packet packet)
         {
             this.EthernetLayer = _layerExtractor.ExtractEthernetLayerFromPacket(packet);
             this.TcpLayer = _layerExtractor.ExtractTcpLayerFromPacket(packet);
@@ -81,7 +75,7 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// Modifies every layer, one by one
         /// </summary>
         /// <returns>Same object with modified values</returns>
-        public override CustomBasePacket ModifyLayers()
+        public override INewPacket ModifyLayers()
         {
             this.TcpLayer = _layerModifier.ModifyLayer(this.TcpLayer);
             this.IpV4Layer = _layerModifier.ModifyLayer(this.IpV4Layer);

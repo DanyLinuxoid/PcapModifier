@@ -43,6 +43,13 @@ namespace PcapPacketModifier.Logic.Tools.Interfaces
         void TrySaveOnePacketToDisk(Packet packet, string fileName = "savedpacket");
 
         /// <summary>
+        /// Gets length of the file provided on path
+        /// </summary>
+        /// <param name="path">Path to file</param>
+        /// <returns>Size of file on path</returns>
+        long GetFileLength(string path);
+
+        /// <summary>
         /// Responsible for path providing to files
         /// </summary>
         IPathProvider PathProvider { get; }

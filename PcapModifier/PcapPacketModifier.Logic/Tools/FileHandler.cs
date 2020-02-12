@@ -63,6 +63,16 @@ namespace PcapPacketModifier.Logic.Tools
         }
 
         /// <summary>
+        /// Gets length of the file provided on path
+        /// </summary>
+        /// <param name="path">Path to file</param>
+        /// <returns>Size of file on path</returns>
+        public long GetFileLength(string path)
+        {
+            return new FileInfo(@path).Length;
+        }
+
+        /// <summary>
         /// Creates file on provided path
         /// </summary>
         /// <param name="path">Path to file</param>

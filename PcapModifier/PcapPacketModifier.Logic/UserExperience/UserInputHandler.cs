@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using NDesk.Options;
+using PcapDotNet.Core;
 using PcapDotNet.Packets.IpV4;
+using PcapPacketModifier.Logic.Packets;
 using PcapPacketModifier.Logic.UserExperience.Interfaces;
 using PcapPacketModifier.Userdata.User;
 
@@ -28,27 +31,30 @@ namespace PcapPacketModifier.Logic.UserExperience
         /// <returns>UserInputData class with user preferences/chosen options</returns>
         public UserInputData ParseUserConsoleArguments(string[] args)
         {
-            if (args is null || 
-                args.Length < 2)
-            {
-                _textDisplayer.ShowUsage();
-                _consoleWrapper.ExitConsole();
-            }
+            PreprocessUserArguments(args);
 
             string pathToFile = null;
             int packetCountToSend = 1;
+            int timeToWaitUntilNextPacketToSend = 0;
             bool isModifyPacket = false;
             bool isUserWantsToSavePacketAfterModifying = false;
             bool isSendPacket = false;
             bool isHelpRequired = false;
+            bool isInterceptAndForward = false;
+            bool isVerbosity = false; // NOT IMPLEMENTED
+            IpV4Protocol protocolToFilterBy = default;
             OptionSet optionsSet = new OptionSet()
             {
                 { "p|path=", "--{PATH} to packet", p => pathToFile = p },
                 { "c|count=", "--Packet {COUNT} to send", c => int.TryParse(c, out packetCountToSend) },
-                { "m", "--Modify packet", m => { isModifyPacket = (m != null); } },
+                { "m|modify", "--Modify packet", m => { isModifyPacket = (m != null); } },
                 { "s|save", "--Save packet to .pcap file", s=> { isUserWantsToSavePacketAfterModifying = (s != null); } },
-                { "S|send", "--Send packet to web", W => { isSendPacket = (W != null); } },
-                { "h|help", "--Show help", h => {isHelpRequired = (h != null); } },
+                { "S|send", "--Send packet to web", S=> { isSendPacket = (S != null); } },
+                { "h|help", "--Show help", h => { isHelpRequired = (h != null); } },
+                { "I|interforward", "--Intercept and forward packets through local machines internet interface", I => { isInterceptAndForward = (I != null); } },
+                { "v|verbose", "--Display additional information", v => { isVerbosity = (v != null); } }, // NOT IMPLEMENTED
+                { "t|time=", "--Time to wait until next packet will be sended (in milliseconds)", t => int.TryParse(t, out timeToWaitUntilNextPacketToSend) },
+                { "f|filter=", "--Is used with -I options, to filter packets by protocol", f => Enum.TryParse(f, out protocolToFilterBy) },
             };
 
             try
@@ -67,8 +73,12 @@ namespace PcapPacketModifier.Logic.UserExperience
                 PacketCountToSend = packetCountToSend,
                 IsModifyPacket = isModifyPacket,
                 IsUserWantsToSavePacketAfterModifying = isUserWantsToSavePacketAfterModifying,
-                IsSendPacket = isSendPacket,
+                IsSendOnePacket = isSendPacket,
                 IsHelpRequired = isHelpRequired,
+                IsVerbose = isVerbosity,
+                TimeToWaitUntilNextPacketWillBeSended = timeToWaitUntilNextPacketToSend,
+                IsInterceptAndForward = isInterceptAndForward,
+                PacketFilterProtocol = protocolToFilterBy,
             };
 
             CheckUserParsedArguments(userInputData, optionsSet);
@@ -175,26 +185,84 @@ namespace PcapPacketModifier.Logic.UserExperience
         }
 
         /// <summary>
+        /// Gets user chosen internet device
+        /// </summary>
+        /// <param allDevices="Local machine devices"></param>
+        /// <returns>User chosen device</returns>
+        public int GetUserChoosenLocalMachineInternetDevice(IList<LivePacketDevice> allDevices)
+        {
+            int userChosenDevice = 0;
+            int.TryParse(GetUserInput(), out userChosenDevice);
+            int correctedDeviceNumber = userChosenDevice - 1; // -1 because of array
+            if (!(correctedDeviceNumber <= 0) && !(correctedDeviceNumber > allDevices.Count))
+            {
+                return userChosenDevice;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
         /// Verify that user arguments are ok
         /// </summary>
         /// <param name="userInputData">User arguments to check</param>
         /// <param name="options">User options with descriptions</param>
-        public void CheckUserParsedArguments(UserInputData userInputData, OptionSet options)
+        private void CheckUserParsedArguments(UserInputData userInputData, OptionSet options)
         {
+            if (string.IsNullOrEmpty(userInputData.PathToFile) &&
+                userInputData.IsSendOnePacket)
+            {
+                _textDisplayer.PrintTextAndExit("Path must be provided");
+            }
+
             if (userInputData.IsHelpRequired)
             {
                 _textDisplayer.ShowHelp(options);
                 _consoleWrapper.ExitConsole();
             }
 
-            if (string.IsNullOrEmpty(userInputData.PathToFile))
-            {
-                _textDisplayer.PrintTextAndExit("-p is required option");
-            }
-
             if (userInputData.PacketCountToSend == 0)
             {
                 _textDisplayer.PrintTextAndExit("Wrong count set for packet to be sent");
+            }
+
+            if (userInputData.IsSendOnePacket &&
+                userInputData.IsInterceptAndForward)
+            {
+                _textDisplayer.PrintTextAndExit("Can't send one packet and intercept multiple, choose one option");
+            }
+
+            if (userInputData.PacketFilterProtocol != default &&
+                !userInputData.IsInterceptAndForward)
+            {
+                _textDisplayer.PrintText("Packet filtering can be used only with interception mode");
+            }
+
+            if (!Enum.IsDefined(typeof(SupportedProtocols), userInputData.PacketFilterProtocol.ToString()))
+            {
+                _textDisplayer.PrintText("Currently application can work with these protocols:");
+                _textDisplayer.PrintEnumValues(typeof(SupportedProtocols));
+                _consoleWrapper.ExitConsole();
+            }
+        }
+
+        /// <summary>
+        /// Does small preprocessing, in order to know, if user using arguments in wrong order, in incorrect positions, etc
+        /// </summary>
+        /// <param name="args">User arguments</param>
+        private void PreprocessUserArguments(string[] args)
+        {
+            if (args is null ||
+                args.Length < 2)
+            {
+                _textDisplayer.ShowUsage();
+                _consoleWrapper.ExitConsole();
+            }
+
+            if (args[1] != "-S" &&
+                args[1] != "-I")
+            {
+                _textDisplayer.PrintText("Second option must be mode to send packets");
             }
         }
     }

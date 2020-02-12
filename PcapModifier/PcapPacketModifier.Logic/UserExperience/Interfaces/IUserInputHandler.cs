@@ -1,4 +1,6 @@
-﻿using PcapPacketModifier.Userdata.User;
+﻿using PcapDotNet.Core;
+using PcapPacketModifier.Userdata.User;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace PcapPacketModifier.Logic.UserExperience.Interfaces
@@ -14,6 +16,13 @@ namespace PcapPacketModifier.Logic.UserExperience.Interfaces
         /// <param name="args">User input args</param>
         /// <returns>Class with input data, that stores user input information</returns>
         UserInputData ParseUserConsoleArguments(string[] args);
+
+        /// <summary>
+        /// Gets user chosen internet device
+        /// </summary>
+        /// <param allDevices="Local machine devices"></param>
+        /// <returns>User chosen device</returns>
+        int GetUserChoosenLocalMachineInternetDevice(IList<LivePacketDevice> allDevices);
 
         /// <summary>
         /// Asks user whether not he wants to proceed

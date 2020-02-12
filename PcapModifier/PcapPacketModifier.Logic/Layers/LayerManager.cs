@@ -1,10 +1,7 @@
-﻿
-using PcapDotNet.Packets;
-using PcapDotNet.Packets.IpV4;
+﻿using PcapDotNet.Packets;
 using PcapPacketModifier.Logic.Factories;
 using PcapPacketModifier.Logic.Layers.Interfaces;
-using PcapPacketModifier.Userdata.Packets;
-using System;
+using PcapPacketModifier.Userdata.Packets.Interfaces;
 
 namespace PcapPacketModifier.Logic.Layers
 {
@@ -28,9 +25,9 @@ namespace PcapPacketModifier.Logic.Layers
         /// <param name="packet">Packet object from which layers must be extracted</param>
         /// <param name="protocol">Protocol of packet</param>
         /// <returns>Custom packet with extracted layers</returns>
-        public CustomBasePacket ExtractLayersFromPacketAndReturnNewPacket(Packet packet, IpV4Protocol protocol)
+        public INewPacket ExtractLayersFromPacketAndReturnNewPacket(Packet packet)
         {
-            return PacketFactory.GetPacket(protocol, _layerExtractor, _layerModifier).ExtractLayers(packet);
+            return PacketFactory.GetPacket(packet.Ethernet.IpV4.Protocol, _layerExtractor, _layerModifier).ExtractLayers(packet);
         }
     }
 }

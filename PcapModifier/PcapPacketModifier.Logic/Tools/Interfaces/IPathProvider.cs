@@ -13,5 +13,11 @@
         /// </summary>
         /// <returns>Path to solution as string</returns>
         string GetDefaultPathToSolution();
+
+        /// <summary>
+        /// Gets default path for dumpfile, where to load download files    
+        /// </summary>
+        /// <returns>Path to dumpfile</returns>
+        string GetDefaultPathForDumpFile();
     }
 }

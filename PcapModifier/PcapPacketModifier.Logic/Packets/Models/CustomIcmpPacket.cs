@@ -5,6 +5,7 @@ using PcapDotNet.Packets.Icmp;
 using PcapDotNet.Packets.IpV4;
 using PcapPacketModifier.Logic.Layers.Interfaces;
 using PcapPacketModifier.Userdata.Packets;
+using PcapPacketModifier.Userdata.Packets.Interfaces;
 
 namespace PcapPacketModifier.Logic.Packets.Models
 {
@@ -29,7 +30,7 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// <summary>
         /// Icmp layer for icmp packet
         /// </summary>
-        public IcmpLayer IcmpLayer { get; set; }
+        public IcmpEchoLayer IcmpLayer{ get; set; }
 
         public CustomIcmpPacket(ILayerModifier layerModifier, ILayerExtractor layerExtractor)
         {
@@ -41,20 +42,12 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// Builds packet and seals it
         /// </summary>
         /// <returns>Builded packet</returns>
-        public override Packet BuildPacket()
-        {
-            PreProcessLayersBeforeBuildingPacket();
-            return new PacketBuilder(this.EthernetLayer, this.IpV4Layer, this.IcmpLayer).Build(DateTime.Now);
-        }
-
-        /// <summary>
-        /// Sets some fields in packet to default values, because in building process
-        /// they will be filled automatically, ignores user values
-        /// </summary>
-        protected override void PreProcessLayersBeforeBuildingPacket()
+        public override Packet BuildPacket(uint sequenceNumber)
         {
             EthernetLayer.EtherType = EthernetType.None;
             IcmpLayer.Checksum = null;
+            IcmpLayer.SequenceNumber = (ushort)sequenceNumber;
+            return new PacketBuilder(this.EthernetLayer, this.IpV4Layer, this.IcmpLayer).Build(DateTime.Now);
         }
 
         /// <summary>
@@ -62,7 +55,7 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// </summary>
         /// <param name="packet">Packet to extract layers from</param>
         /// <returns>Cusom packet with freshly extracted layers</returns>
-        public override CustomBasePacket ExtractLayers(Packet packet)
+        public override INewPacket ExtractLayers(Packet packet)
         {
             this.EthernetLayer = _layerExtractor.ExtractEthernetLayerFromPacket(packet);
             this.IpV4Layer = _layerExtractor.ExtractIpv4LayerFromPacket(packet);
@@ -75,7 +68,7 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// Modifies every layer, one by one
         /// </summary>
         /// <returns>Same object with modified values</returns>
-        public override CustomBasePacket ModifyLayers()
+        public override INewPacket ModifyLayers()
         {
             this.IpV4Layer = _layerModifier.ModifyLayer(this.IpV4Layer);
             this.EthernetLayer = _layerModifier.ModifyLayer(this.EthernetLayer);

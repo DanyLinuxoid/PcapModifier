@@ -1,7 +1,7 @@
 ﻿using PcapDotNet.Packets;
 using PcapPacketModifier.Logic.Packets.Interfaces;
 using PcapPacketModifier.Logic.Tools.Interfaces;
-using PcapPacketModifier.Userdata.Packets;
+using PcapPacketModifier.Userdata.Packets.Interfaces;
 using PcapPacketModifier.Userdata.User;
 using System;
 
@@ -28,7 +28,7 @@ namespace PcapPacketModifier.Logic.Core
         /// <param name="inputData">User input data to work with during logic</param>
         public void ProcessLogic(UserInputData inputData)
         {
-            if (inputData is null)
+            if (inputData == null)
             {
                 throw new ArgumentNullException(nameof(inputData));
             }
@@ -39,16 +39,21 @@ namespace PcapPacketModifier.Logic.Core
                 throw new InvalidOperationException(nameof(packet) + " was null");
             }
 
-            CustomBasePacket customPacket = _packetManager.ExtractLayersFromPacket(packet);
+            INewPacket customPacket = _packetManager.ExtractLayersFromPacket(packet);
 
             if (inputData.IsModifyPacket)
             {
                 customPacket.ModifyLayers();
             }
 
-            if (inputData.IsSendPacket)
+            if (inputData.IsSendOnePacket)
             {
-                _packetManager.SendPacket(customPacket, inputData.PacketCountToSend);
+                _packetManager.SendPacket(customPacket, inputData.PacketCountToSend, inputData.TimeToWaitUntilNextPacketWillBeSended);
+            }
+
+            if (inputData.IsInterceptAndForward)
+            {
+                _packetManager.InterceptAndForwardPackets(inputData);
             }
 
             if (inputData.IsUserWantsToSavePacketAfterModifying)

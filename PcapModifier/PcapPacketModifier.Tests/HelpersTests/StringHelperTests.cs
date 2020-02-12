@@ -36,28 +36,27 @@ namespace UnitTests.HelpersTests
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
-        //[DataTestMethod]
-        //[DataRow("first, second")]
-        //[DataRow("first second")]
-        //[DataRow("first second,")]
-        //[DataRow(",first second")]
-        //[DataRow(",first second,")]
-        //[DataRow("first,, second")]
-        //[DataRow(",,first,, second,,")]
-        //[DataRow("first  second")]
-        //[DataRow("first second ")]
-        //[DataRow(" first second")]
-        //[DataRow("first second")]
-        //[DataRow(".,.,first    second.,. ")]
-        //public void StringWithCommasToArrayOfStringValues_StringIsWithCommas_ReturnsArrayWithStringValues(string input)
-                                                                                                                                                                  
-        //{
-        //    // Act
-        //    string[] result = _target.StringWithSignSeparatorsToArrayOfValues(input);
+        [TestCase("first, second")]
+        [TestCase("first second")]
+        [TestCase("first second,")]
+        [TestCase(",first second")]
+        [TestCase(",first second,")]
+        [TestCase("first,, second")]
+        [TestCase(",,first,, second,,")]
+        [TestCase("first  second")]
+        [TestCase("first second ")]
+        [TestCase(" first second")]
+        [TestCase("first second")]
+        [TestCase(".,.,first    second.,. ")]
+        public void StringWithCommasToArrayOfStringValues_StringIsWithCommas_ReturnsArrayWithStringValues(string input)
 
-        //    // Assert
-        //    result[0].Should().Be("first");
-        //    result[1].Should().Be("second");
-        //}
+        {
+            // Act
+            string[] result = _target.StringWithSignSeparatorsToArrayOfValues(input);
+
+            // Assert
+            result[0].Should().Be("first");
+            result[1].Should().Be("second");
+        }
     }
 }

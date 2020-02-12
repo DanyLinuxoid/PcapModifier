@@ -14,17 +14,14 @@ namespace PcapPacketModifier.Logic.Modules
     /// </summary>
     public class ModuleModifier : IModuleModifier
     {
-        private readonly IUserInputHandler _userInputHandler;
-        private readonly ITextDisplayer _textDisplayer;
+        private readonly IUserExperience _userExperience;
         private readonly ISpecificModulesModifier _specificModuleModifier;
 
-        public ModuleModifier(IUserInputHandler userInputHandler,
-                                        ITextDisplayer textDisplayer,
-                                        ISpecificModulesModifier specificModules)
+        public ModuleModifier(ISpecificModulesModifier specificModules,
+                                        IUserExperience userExperience)
         {
-            _userInputHandler = userInputHandler;
-            _textDisplayer = textDisplayer;
             _specificModuleModifier = specificModules;
+            _userExperience = userExperience;
         }
 
         /// <summary>
@@ -42,10 +39,10 @@ namespace PcapPacketModifier.Logic.Modules
                 throw new ArgumentNullException(nameof(layer));
             }
 
-            _textDisplayer.PrintHelpingMessageBeforeModifyingLayer(layer);
+            _userExperience.UserTextDisplayer.PrintHelpingMessageBeforeModifyingLayer(layer);
             if (layer.GetType() == typeof(PayloadLayer))
             {
-                _textDisplayer.DisplayPayloadData(layer as PayloadLayer);
+                _userExperience.UserTextDisplayer.DisplayPayloadData(layer as PayloadLayer);
             }
 
             var sourceProps = GetLayerPublicAndWritableProperties(layer);
@@ -58,20 +55,20 @@ namespace PcapPacketModifier.Logic.Modules
                 }
 
                 // Printing property type, field, current value
-                _textDisplayer.PrintModuleInfo(fieldType.ToString().Split('.').Last(), property.Name, property.GetValue(layer).ToString());
+                _userExperience.UserTextDisplayer.PrintModuleInfo(fieldType.ToString().Split('.').Last(), property.Name, property.GetValue(layer).ToString());
 
-                string userInput = _userInputHandler.AskUserInputWhileInputContainsPatterns(property);
+                string userInput = _userExperience.UserInputHandler.AskUserInputWhileInputContainsPatterns(property);
                 if (!string.IsNullOrWhiteSpace(userInput))
                 {
                     object valueOfType = _specificModuleModifier.HandleSpecificModule(property.PropertyType, userInput);
                     if (valueOfType != null)
                     {
                         property.SetValue(layer, valueOfType);
-                        _textDisplayer.SuccessfullyModifiedModule();
+                        _userExperience.UserTextDisplayer.SuccessfullyModifiedModule();
                         continue;
                     }
 
-                    _textDisplayer.FailedModifyingModule();
+                    _userExperience.UserTextDisplayer.FailedModifyingModule();
                 }
             }
 

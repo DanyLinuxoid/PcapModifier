@@ -51,6 +51,6 @@ namespace PcapPacketModifier.Logic.Layers.Interfaces
         /// </summary>
         /// <param name="packet">Packet to extract layer from</param>
         /// <returns></returns>
-        IcmpLayer ExtractIcmpLayerFromPacket(Packet packet);
+        IcmpEchoLayer ExtractIcmpLayerFromPacket(Packet packet);
     }
 }

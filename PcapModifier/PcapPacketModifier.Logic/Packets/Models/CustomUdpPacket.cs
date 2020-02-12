@@ -4,6 +4,7 @@ using PcapDotNet.Packets.IpV4;
 using PcapDotNet.Packets.Transport;
 using PcapPacketModifier.Logic.Layers.Interfaces;
 using PcapPacketModifier.Userdata.Packets;
+using PcapPacketModifier.Userdata.Packets.Interfaces;
 using System;
 
 namespace PcapPacketModifier.Logic.Packets.Models
@@ -43,28 +44,19 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// Builds packet and seals it
         /// </summary>
         /// <returns>Builded packet</returns>
-        public override Packet BuildPacket()
-        {
-            PreProcessLayersBeforeBuildingPacket();
-            return new PacketBuilder(this.EthernetLayer, this.IpV4Layer, this.UdpLayer, this.PayloadLayer).Build(DateTime.Now);
-        }
-
-        /// <summary>
-        /// Sets some fields in packet to default values, because in building process
-        /// they will be filled automatically, ignores user values
-        /// </summary>
-        protected override void PreProcessLayersBeforeBuildingPacket()
+        public override Packet BuildPacket(uint sequenceNumber)
         {
             EthernetLayer.EtherType = EthernetType.None;
             UdpLayer.Checksum = null;
+            return new PacketBuilder(this.EthernetLayer, this.IpV4Layer, this.UdpLayer, this.PayloadLayer).Build(DateTime.Now);
         }
 
         /// <summary>
         /// Extracts layers from provided packet and swaps current layers with extracted 
         /// </summary>
         /// <param name="packet">Packet to extract layers from</param>
-        /// <returns>Cusom packet with freshly extracted layers</returns>
-        public override CustomBasePacket ExtractLayers(Packet packet)
+        /// <returns>Custom packet with freshly extracted layers</returns>
+        public override INewPacket ExtractLayers(Packet packet)
         {
             this.EthernetLayer = _layerExtractor.ExtractEthernetLayerFromPacket(packet);
             this.UdpLayer = _layerExtractor.ExtractUdpLayerFromPacket(packet);
@@ -78,7 +70,7 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// Modifies every layer, one by one
         /// </summary>
         /// <returns>Same object with modified values</returns>
-        public override CustomBasePacket ModifyLayers()
+        public override INewPacket ModifyLayers()
         {
             this.UdpLayer= _layerModifier.ModifyLayer(this.UdpLayer);
             this.IpV4Layer = _layerModifier.ModifyLayer(this.IpV4Layer);

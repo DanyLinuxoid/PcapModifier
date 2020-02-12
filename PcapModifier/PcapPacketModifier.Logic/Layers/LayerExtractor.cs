@@ -118,7 +118,7 @@ namespace PcapPacketModifier.Logic.Layers
         /// </summary>
         /// <param name="packet">Packet to extract layer from</param>
         /// <returns>Icmp layer that can be modified</returns>
-        public IcmpLayer ExtractIcmpLayerFromPacket(Packet packet)
+        public IcmpEchoLayer ExtractIcmpLayerFromPacket(Packet packet)
         {
             if (packet is null)
             {
@@ -130,7 +130,7 @@ namespace PcapPacketModifier.Logic.Layers
                 throw new System.ArgumentNullException(nameof(packet));
             }
 
-            return packet.Ethernet.IpV4.Icmp.ExtractLayer() as IcmpLayer;
+            return packet.Ethernet.IpV4.Icmp.ExtractLayer() as IcmpEchoLayer;
         }
     }
 }

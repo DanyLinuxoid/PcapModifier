@@ -25,7 +25,7 @@ namespace PcapPacketModifier.Logic.UserExperience.Interfaces
         /// Prints data of new packet, layer by layer
         /// </summary>
         /// <param name="packet">Packet to print info for</param>
-        void ShowNewPacketData(Packet packet);
+        void ShowPacketBaseInfo(Packet packet);
 
         /// <summary>
         /// Template for text printing
@@ -96,5 +96,10 @@ namespace PcapPacketModifier.Logic.UserExperience.Interfaces
         /// </summary>
         /// <param name="layer">String of decoded bytes that can be displayed</param>
         void DisplayPayloadData(PayloadLayer layer);
+
+        /// <summary>
+        /// Displays small hint message while interception is in progress
+        /// </summary>
+        void DisplayHintWhileInterceptionIsInProgress();
     }
 }

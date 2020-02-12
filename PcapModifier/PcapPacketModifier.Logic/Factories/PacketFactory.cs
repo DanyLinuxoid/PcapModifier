@@ -2,6 +2,7 @@
 using PcapPacketModifier.Logic.Layers.Interfaces;
 using PcapPacketModifier.Logic.Packets.Models;
 using PcapPacketModifier.Userdata.Packets;
+using PcapPacketModifier.Userdata.Packets.Interfaces;
 
 namespace PcapPacketModifier.Logic.Factories
 {
@@ -17,9 +18,9 @@ namespace PcapPacketModifier.Logic.Factories
         /// <param name="layerExtractor">Object that responsible for layer extraction</param>
         /// <param name="layerModifier">Object that responsible for layer modification</param>
         /// <returns>New Custom packet of provided protocol with provided values in it</returns>
-        public static CustomBasePacket GetPacket(IpV4Protocol protocol,
-                                                                      ILayerExtractor layerExtractor,
-                                                                      ILayerModifier layerModifier)
+        public static INewPacket GetPacket(IpV4Protocol protocol,
+                                                           ILayerExtractor layerExtractor,
+                                                           ILayerModifier layerModifier)
         {
             switch (protocol)
             {

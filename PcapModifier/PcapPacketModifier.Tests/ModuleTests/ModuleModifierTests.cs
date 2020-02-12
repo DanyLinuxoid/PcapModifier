@@ -12,22 +12,25 @@ namespace UnitTests.ModuleTests
 {
     public class ModuleModifierTests
     {
-        private Mock<IUserInputHandler> _userInputHandlerMock;
-        private Mock<ITextDisplayer> _textDisplayerMock;
+        private Mock<IUserExperience> _userExperienceMock;
         private Mock<ISpecificModulesModifier> _specificModulesModifierMock;
+        private Mock<ITextDisplayer> _textDisplayerMock;
+        private Mock<IUserInputHandler> _userInputHandlerMock;
         private IDummyLayerCreator _dummyLayerCreator;
         private IModuleModifier _target;
 
         [SetUp]
         public void Setup()
         {
-            _userInputHandlerMock = new Mock<IUserInputHandler>();
+            _userExperienceMock = new Mock<IUserExperience>();
             _textDisplayerMock = new Mock<ITextDisplayer>();
+            _userInputHandlerMock = new Mock<IUserInputHandler>();
+            _userExperienceMock.Setup(x => x.UserTextDisplayer).Returns(_textDisplayerMock.Object);
+            _userExperienceMock.Setup(x => x.UserInputHandler).Returns(_userInputHandlerMock.Object);
             _specificModulesModifierMock = new Mock<ISpecificModulesModifier>();
             _dummyLayerCreator = new DummyLayerCreator();
-            _target = new ModuleModifier(_userInputHandlerMock.Object,
-                                                        _textDisplayerMock.Object,
-                                                        _specificModulesModifierMock.Object);
+            _target = new ModuleModifier(_specificModulesModifierMock.Object,
+                                                        _userExperienceMock.Object);
         }
 
         [Test]
@@ -48,7 +51,7 @@ namespace UnitTests.ModuleTests
 
             var propertyInfo = layer.GetType().GetProperty("DestinationPort");
 
-            _userInputHandlerMock.Setup(x => x.AskUserInputWhileInputContainsPatterns(propertyInfo))
+            _userExperienceMock.Setup(x => x.UserInputHandler.AskUserInputWhileInputContainsPatterns(propertyInfo))
                 .Returns("");
 
             // Act
@@ -69,7 +72,7 @@ namespace UnitTests.ModuleTests
             var userInput = "10";
             ushort parsedValue = 10;
 
-            _userInputHandlerMock.Setup(x => x.AskUserInputWhileInputContainsPatterns(propertyInfo))
+            _userExperienceMock.Setup(x => x.UserInputHandler.AskUserInputWhileInputContainsPatterns(propertyInfo))
                 .Returns(userInput);
             _specificModulesModifierMock.Setup(x => x.HandleSpecificModule(propertyInfo.PropertyType, userInput))
                 .Returns(parsedValue);
@@ -90,7 +93,7 @@ namespace UnitTests.ModuleTests
             var userInput = "0";
             ushort parsedValue = 0;
 
-            _userInputHandlerMock.Setup(x => x.AskUserInputWhileInputContainsPatterns(propertyInfo))
+            _userExperienceMock.Setup(x => x.UserInputHandler.AskUserInputWhileInputContainsPatterns(propertyInfo))
                 .Returns(userInput);
             _specificModulesModifierMock.Setup(x => x.HandleSpecificModule(propertyInfo.PropertyType, userInput))
                 .Returns(parsedValue);
@@ -110,7 +113,7 @@ namespace UnitTests.ModuleTests
             var propertyInfo = layer.GetType().GetProperty("Checksum");
             var userInput = "asa";
 
-            _userInputHandlerMock.Setup(x => x.AskUserInputWhileInputContainsPatterns(propertyInfo))
+            _userExperienceMock.Setup(x => x.UserInputHandler.AskUserInputWhileInputContainsPatterns(propertyInfo))
                 .Returns(userInput);
             _specificModulesModifierMock.Setup(x => x.HandleSpecificModule(propertyInfo.PropertyType, userInput))
                 .Returns(null);

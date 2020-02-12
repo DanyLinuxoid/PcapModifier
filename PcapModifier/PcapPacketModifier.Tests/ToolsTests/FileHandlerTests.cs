@@ -80,17 +80,16 @@ namespace UnitTests.ToolsTests
             result.Should().BeTrue();
         }
 
-        //[DataTestMethod]
-        //[DataRow("../../../../../../../")]
-        //[DataRow("........")]
-        //public void TryCreateFile_InvalidPath_FileIsNotCreated(string path)
-        //{
-        //    // Act
-        //    var result = _target.TryCreateSimpleEmptyFile(path);
+        [TestCase("../../../../../../../")]
+        [TestCase("........")]
+        public void TryCreateFile_InvalidPath_FileIsNotCreated(string path)
+        {
+            // Act
+            var result = _target.TryCreateSimpleEmptyFile(path);
 
-        //    // Assert
-        //    result.Should().BeFalse();
-        //}
+            // Assert
+            result.Should().BeFalse();
+        }
 
         [Test]
         public void TryWriteMessageToFile_BadPath_ErrorIsPrinted()

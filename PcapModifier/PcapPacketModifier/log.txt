@@ -1,0 +1,8 @@
+
+Date: 10.02.2020 23:34:02
+Error Message: Type provided must be an Enum.
+Parameter name: enumType
+Stack Trace:    at System.RuntimeType.GetEnumValues()
+   at System.Enum.GetValues(Type enumType)
+   at PcapPacketModifier.Logic.UserExperience.TextDisplayer.PrintEnumValues(Type enums) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\UserExperience\TextDisplayer.cs:line 96
+END
