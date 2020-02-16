@@ -26,12 +26,12 @@ namespace PcapPacketModifier.Userdata.User
         /// <summary>
         /// Field holds result of user input regarding file saving option
         /// </summary>
-        public bool IsUserWantsToSavePacketAfterModifying { get; set; }
+        public bool IsUserWantsToSavePacket { get; set; }
 
         /// <summary>
         /// If user wants to send one packet after building
         /// </summary>
-        public bool IsSendOnePacket { get; set; }
+        public bool IsSendPacket { get; set; }
 
         /// <summary>
         /// If user wants to intercept traffic, modify it and only then forward/resend
@@ -44,11 +44,6 @@ namespace PcapPacketModifier.Userdata.User
         public bool IsHelpRequired { get; set; }
 
         /// <summary>
-        /// If user wants to see more info in output
-        /// </summary>
-        public bool IsVerbose { get; set; }
-
-        /// <summary>
         /// Pause before packets in milliseconds
         /// </summary>
         public int TimeToWaitUntilNextPacketWillBeSended { get; set; }
@@ -56,6 +51,6 @@ namespace PcapPacketModifier.Userdata.User
         /// <summary>
         /// Holds value, by which protocol packets will be filtered during interception/modification
         /// </summary>
-        public IpV4Protocol PacketFilterProtocol { get; set; }
+        public string PacketFilterProtocol { get; set; }
     }
 }

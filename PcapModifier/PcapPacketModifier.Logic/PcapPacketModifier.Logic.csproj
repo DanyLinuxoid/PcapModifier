@@ -67,15 +67,16 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Factories\GenericInstanceCreator.cs" />
     <Compile Include="Factories\Interfaces\IGenericInstanceCreator.cs" />
+    <Compile Include="Factories\Interfaces\IPacketFactory.cs" />
     <Compile Include="Factories\PacketFactory.cs" />
     <Compile Include="Helpers\ErrorConstructor.cs" />
     <Compile Include="Helpers\Interfaces\IStringHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Layers\Interfaces\ILayerExchanger.cs" />
     <Compile Include="Layers\Interfaces\ILayerExtractor.cs" />
-    <Compile Include="Layers\Interfaces\ILayerManager.cs" />
     <Compile Include="Layers\Interfaces\ILayerModifier.cs" />
+    <Compile Include="Layers\LayerExchanger.cs" />
     <Compile Include="Layers\LayerExtractor.cs" />
-    <Compile Include="Layers\LayerManager.cs" />
     <Compile Include="Layers\LayerModifier.cs" />
     <Compile Include="Logger\Interfaces\ISimpleLogger.cs" />
     <Compile Include="Logger\SimpleFileLogger.cs" />
@@ -97,7 +98,6 @@
     <Compile Include="Packets\Models\CustomTcpPacket.cs" />
     <Compile Include="Packets\Models\CustomUdpPacket.cs" />
     <Compile Include="Packets\PacketManager.cs" />
-    <Compile Include="Packets\SupportedProtocols.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sender\Interfaces\IPacketSender.cs" />
     <Compile Include="Sender\PacketSender.cs" />

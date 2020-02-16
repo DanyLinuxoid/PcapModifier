@@ -33,32 +33,32 @@ namespace PcapPacketModifier.Logic.Core
                 throw new ArgumentNullException(nameof(inputData));
             }
 
-            Packet packet = _fileHandler.TryOpenUserPacketFromFile(inputData.PathToFile);
-            if (packet == null)
+            if (inputData.IsSendPacket &&
+                !inputData.IsInterceptAndForward)
             {
-                throw new InvalidOperationException(nameof(packet) + " was null");
-            }
+                Packet packet = _fileHandler.TryOpenUserPacketFromFile(inputData.PathToFile);
+                if (packet == null)
+                {
+                    throw new InvalidOperationException(nameof(packet) + " was null");
+                }
 
-            INewPacket customPacket = _packetManager.ExtractLayersFromPacket(packet);
+                INewPacket customPacket = _packetManager.GetPacketByProtocol(packet.Ethernet.IpV4.Protocol).ExtractLayers(packet);
+                if (inputData.IsModifyPacket)
+                {
+                    customPacket.ModifyLayers();
+                }
 
-            if (inputData.IsModifyPacket)
-            {
-                customPacket.ModifyLayers();
-            }
-
-            if (inputData.IsSendOnePacket)
-            {
                 _packetManager.SendPacket(customPacket, inputData.PacketCountToSend, inputData.TimeToWaitUntilNextPacketWillBeSended);
+
+                if (inputData.IsUserWantsToSavePacket)
+                {
+                    _fileHandler.TrySaveOnePacketToDisk(customPacket.BuildPacket(false));
+                }
             }
 
             if (inputData.IsInterceptAndForward)
             {
                 _packetManager.InterceptAndForwardPackets(inputData);
-            }
-
-            if (inputData.IsUserWantsToSavePacketAfterModifying)
-            {
-                _fileHandler.TrySaveOnePacketToDisk(customPacket.BuildPacket());
             }
         }
     }

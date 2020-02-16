@@ -1,5 +1,7 @@
 ﻿using System;
 using PcapDotNet.Packets;
+using PcapDotNet.Packets.IpV4;
+using PcapPacketModifier.Logic.Factories.Interfaces;
 using PcapPacketModifier.Logic.Layers.Interfaces;
 using PcapPacketModifier.Logic.Packets.Interfaces;
 using PcapPacketModifier.Logic.Sender.Interfaces;
@@ -12,14 +14,14 @@ namespace PcapPacketModifier.Logic.Packets
     /// </summary>
     public class PacketManager : IPacketManager
     {
-        private readonly ILayerManager _layerManager;
         private readonly IPacketSender _packetSender;
+        private readonly IPacketFactory _packetFactory;
 
-        public PacketManager(ILayerManager layerManager,
-                                        IPacketSender packetSender)
+        public PacketManager(IPacketSender packetSender,
+                                        IPacketFactory packetFactory)
         {
-            _layerManager = layerManager;
             _packetSender = packetSender;
+            _packetFactory = packetFactory;
         }
 
         /// <summary>
@@ -27,14 +29,9 @@ namespace PcapPacketModifier.Logic.Packets
         /// </summary>
         /// <param name="packet">Packet to extract data from</param>
         /// <returns>Returns new Packet object with extracted layers</returns>
-        public INewPacket ExtractLayersFromPacket(Packet packet)
+        public INewPacket GetPacketByProtocol(IpV4Protocol protocol)
         {
-            if (packet is null)
-            {
-                throw new ArgumentNullException(nameof(packet));
-            }
-
-            return _layerManager.ExtractLayersFromPacketAndReturnNewPacket(packet);
+            return _packetFactory.GetPacketByProtocol(protocol);
         }
 
         /// <summary>
@@ -59,6 +56,17 @@ namespace PcapPacketModifier.Logic.Packets
         public void InterceptAndForwardPackets(Userdata.User.UserInputData userInput)
         {
             _packetSender.InterceptAndForwardPackets(userInput);
+        }
+
+        /// <summary>
+        /// Copy packet modules from one to other
+        /// </summary>
+        /// <param name="toCopyFrom">Source packet to copy from</param>
+        /// <param name="toCopyTo">Packet to copy to</param>
+        /// <returns>Packet with copied modules</returns>
+        public INewPacket CopyModifiedModulesFromModifiedPacketToNewPacket(INewPacket toCopyFrom, INewPacket toCopyTo)
+        {
+            return toCopyTo.CopyModulesFrom(toCopyFrom);
         }
     }
 }

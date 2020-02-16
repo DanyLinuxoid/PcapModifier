@@ -37,6 +37,11 @@ namespace PcapPacketModifier.Logic.UserExperience.Interfaces
         string GetUserInput();
 
         /// <summary>
+        /// Waits for user to press key
+        /// </summary>
+        void WaitForUserToPressKey();
+
+        /// <summary>
         /// Asks ser input while it contains patterns (-h gor help, -p for print, etc)
         /// </summary>
         /// <param name="property">Property/Module to print help for</param>

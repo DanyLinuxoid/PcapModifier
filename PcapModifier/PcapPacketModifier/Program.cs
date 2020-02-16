@@ -1,4 +1,5 @@
-﻿using SimpleInjector;
+﻿using PcapDotNet.Packets.Ethernet;
+using SimpleInjector;
 using System;
 
 namespace PcapPacketModifier
@@ -15,7 +16,7 @@ namespace PcapPacketModifier
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
-            args = new string[] { "-p=C:\\Users\\MSi\\Desktop\\udp.pcaap", "-I", "-f=Udp" }; // testing purposes
+            args = new string[] { "-p=C:\\Users\\MSi\\Desktop\\syn.pcap", "-I", "-f=tcp", "-S"}; // testing purposes
             Container container = new Startup().ConfigureStartupAndReturndReadyContainer();
             container.Register<IProgramManager, ProgramManager>();
             container.Verify();
@@ -29,6 +30,7 @@ namespace PcapPacketModifier
         /// <param name="e">Arguments</param>
         static void UnhandledExceptionTrapper(object s, UnhandledExceptionEventArgs e)
         {
+            Console.WriteLine("Error occured during program runtime");
             Environment.Exit(0);
         }
     }

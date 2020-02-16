@@ -55,7 +55,7 @@ namespace PcapPacketModifier.Logic.Modules
                 }
 
                 // Printing property type, field, current value
-                _userExperience.UserTextDisplayer.PrintModuleInfo(fieldType.ToString().Split('.').Last(), property.Name, property.GetValue(layer).ToString());
+                _userExperience.UserTextDisplayer.PrintModuleInfo(fieldType.ToString().Split('.').Last(), property.Name, property.GetValue(layer)?.ToString());
 
                 string userInput = _userExperience.UserInputHandler.AskUserInputWhileInputContainsPatterns(property);
                 if (!string.IsNullOrWhiteSpace(userInput))

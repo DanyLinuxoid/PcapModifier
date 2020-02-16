@@ -71,10 +71,16 @@ namespace PcapPacketModifier.Logic.UserExperience
         /// <param name="packet">Packet with data to print</param>
         public void ShowPacketBaseInfo(Packet packet)
         {
-            PrintText("Protocol: " + packet.Ethernet.IpV4.Protocol.ToString());
+            PrintOneLineManyTimes("-", 60);
+            PrintText("\nProtocol: " + packet.Ethernet.IpV4.Protocol.ToString());
             PrintText("IP Destination: " + packet.Ethernet.IpV4.Destination);
-            PrintText("MAC Destination" + packet.Ethernet.Destination);
-            PrintText("Payload: " + Encoding.ASCII.GetString(packet.Ethernet.IpV4.Payload.ToArray()) + "\n");
+            PrintText("MAC Destination: " + packet.Ethernet.Destination);
+            if (packet.Ethernet.IpV4?.Protocol == PcapDotNet.Packets.IpV4.IpV4Protocol.Tcp ||
+                packet.Ethernet.IpV4?.Protocol == PcapDotNet.Packets.IpV4.IpV4Protocol.Udp)
+            {
+                PrintText("Payload: " + Encoding.ASCII.GetString(packet.Ethernet.IpV4.Payload.ToArray()));
+                PrintText("Flags: " + packet.Ethernet.IpV4?.Tcp.ControlBits.ToString());
+            }
         }
 
         /// <summary>
@@ -95,6 +101,32 @@ namespace PcapPacketModifier.Logic.UserExperience
         {
             _consoleWrapper.WriteToConsole(text);
             _consoleWrapper.ExitConsole();
+        }
+
+        /// <summary>
+        /// Write text according to count
+        /// </summary>
+        /// <param name="text">Text to write</param>
+        /// <param name="count">Count to write</param>
+        public void PrintOneLineManyTimes(string text, int count)
+        {
+            for(int i = 0; i < count; i++)
+            {
+                _consoleWrapper.WriteToConsole(text, false);
+            }
+        }
+
+        /// <summary>
+        /// Prints items in list
+        /// </summary>
+        /// <typeparam name="T">Type of items in list</typeparam>
+        /// <param name="listItems">List with items</param>
+        public void PrintItemsInList<T>(List<T> listItems)
+        {
+            foreach(T item in listItems)
+            {
+                PrintText(item.ToString());
+            }
         }
 
         /// <summary>

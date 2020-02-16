@@ -4,7 +4,6 @@ using System.Reflection;
 using NDesk.Options;
 using PcapDotNet.Core;
 using PcapDotNet.Packets.IpV4;
-using PcapPacketModifier.Logic.Packets;
 using PcapPacketModifier.Logic.UserExperience.Interfaces;
 using PcapPacketModifier.Userdata.User;
 
@@ -18,10 +17,16 @@ namespace PcapPacketModifier.Logic.UserExperience
         private readonly ITextDisplayer _textDisplayer;
         private readonly IConsoleWrapper _consoleWrapper;
 
+        private readonly List<string> _supportedProtocols;
+
         public UserInputHandler(ITextDisplayer textDisplayer, IConsoleWrapper consoleWrapper)
         {
             _textDisplayer = textDisplayer;
             _consoleWrapper = consoleWrapper;
+            _supportedProtocols = new List<string>
+            {
+                "tcp", "udp", "icmp",
+            };
         }
 
         /// <summary>
@@ -34,6 +39,7 @@ namespace PcapPacketModifier.Logic.UserExperience
             PreprocessUserArguments(args);
 
             string pathToFile = null;
+            string protocolToFilterBy = null;
             int packetCountToSend = 1;
             int timeToWaitUntilNextPacketToSend = 0;
             bool isModifyPacket = false;
@@ -41,8 +47,6 @@ namespace PcapPacketModifier.Logic.UserExperience
             bool isSendPacket = false;
             bool isHelpRequired = false;
             bool isInterceptAndForward = false;
-            bool isVerbosity = false; // NOT IMPLEMENTED
-            IpV4Protocol protocolToFilterBy = default;
             OptionSet optionsSet = new OptionSet()
             {
                 { "p|path=", "--{PATH} to packet", p => pathToFile = p },
@@ -52,9 +56,8 @@ namespace PcapPacketModifier.Logic.UserExperience
                 { "S|send", "--Send packet to web", S=> { isSendPacket = (S != null); } },
                 { "h|help", "--Show help", h => { isHelpRequired = (h != null); } },
                 { "I|interforward", "--Intercept and forward packets through local machines internet interface", I => { isInterceptAndForward = (I != null); } },
-                { "v|verbose", "--Display additional information", v => { isVerbosity = (v != null); } }, // NOT IMPLEMENTED
                 { "t|time=", "--Time to wait until next packet will be sended (in milliseconds)", t => int.TryParse(t, out timeToWaitUntilNextPacketToSend) },
-                { "f|filter=", "--Is used with -I options, to filter packets by protocol", f => Enum.TryParse(f, out protocolToFilterBy) },
+                { "f|filter=", "--Is used with -I options, to filter packets by protocol", f => protocolToFilterBy = f },
             };
 
             try
@@ -72,10 +75,9 @@ namespace PcapPacketModifier.Logic.UserExperience
                 PathToFile = pathToFile,
                 PacketCountToSend = packetCountToSend,
                 IsModifyPacket = isModifyPacket,
-                IsUserWantsToSavePacketAfterModifying = isUserWantsToSavePacketAfterModifying,
-                IsSendOnePacket = isSendPacket,
+                IsUserWantsToSavePacket = isUserWantsToSavePacketAfterModifying,
+                IsSendPacket = isSendPacket,
                 IsHelpRequired = isHelpRequired,
-                IsVerbose = isVerbosity,
                 TimeToWaitUntilNextPacketWillBeSended = timeToWaitUntilNextPacketToSend,
                 IsInterceptAndForward = isInterceptAndForward,
                 PacketFilterProtocol = protocolToFilterBy,
@@ -103,6 +105,14 @@ namespace PcapPacketModifier.Logic.UserExperience
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Waits for user to press key
+        /// </summary>
+        public void WaitForUserToPressKey()
+        {
+            _consoleWrapper.ReadKey();
         }
 
         /// <summary>
@@ -162,11 +172,9 @@ namespace PcapPacketModifier.Logic.UserExperience
 
                         return true;
                     }
-                default:
-                    {
-                        return false;
-                    }
             }
+
+            return false;
         }
 
         /// <summary>
@@ -209,8 +217,16 @@ namespace PcapPacketModifier.Logic.UserExperience
         /// <param name="options">User options with descriptions</param>
         private void CheckUserParsedArguments(UserInputData userInputData, OptionSet options)
         {
+            if (!string.IsNullOrEmpty(userInputData.PacketFilterProtocol) &&
+                !_supportedProtocols.Contains(userInputData.PacketFilterProtocol.ToLower()))
+            {
+                _textDisplayer.PrintText("Unsupported Protocol");
+                _textDisplayer.PrintItemsInList(_supportedProtocols);
+                _consoleWrapper.ExitConsole();
+            }
+
             if (string.IsNullOrEmpty(userInputData.PathToFile) &&
-                userInputData.IsSendOnePacket)
+                userInputData.IsSendPacket)
             {
                 _textDisplayer.PrintTextAndExit("Path must be provided");
             }
@@ -226,23 +242,10 @@ namespace PcapPacketModifier.Logic.UserExperience
                 _textDisplayer.PrintTextAndExit("Wrong count set for packet to be sent");
             }
 
-            if (userInputData.IsSendOnePacket &&
-                userInputData.IsInterceptAndForward)
-            {
-                _textDisplayer.PrintTextAndExit("Can't send one packet and intercept multiple, choose one option");
-            }
-
-            if (userInputData.PacketFilterProtocol != default &&
+            if (!string.IsNullOrEmpty(userInputData.PacketFilterProtocol) &&
                 !userInputData.IsInterceptAndForward)
             {
-                _textDisplayer.PrintText("Packet filtering can be used only with interception mode");
-            }
-
-            if (!Enum.IsDefined(typeof(SupportedProtocols), userInputData.PacketFilterProtocol.ToString()))
-            {
-                _textDisplayer.PrintText("Currently application can work with these protocols:");
-                _textDisplayer.PrintEnumValues(typeof(SupportedProtocols));
-                _consoleWrapper.ExitConsole();
+                _textDisplayer.PrintTextAndExit("Packet filtering can be used only with interception mode");
             }
         }
 
@@ -257,12 +260,6 @@ namespace PcapPacketModifier.Logic.UserExperience
             {
                 _textDisplayer.ShowUsage();
                 _consoleWrapper.ExitConsole();
-            }
-
-            if (args[1] != "-S" &&
-                args[1] != "-I")
-            {
-                _textDisplayer.PrintText("Second option must be mode to send packets");
             }
         }
     }

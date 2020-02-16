@@ -6,3 +6,81 @@ Stack Trace:    at System.RuntimeType.GetEnumValues()
    at System.Enum.GetValues(Type enumType)
    at PcapPacketModifier.Logic.UserExperience.TextDisplayer.PrintEnumValues(Type enums) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\UserExperience\TextDisplayer.cs:line 96
 END
+
+Date: 15.02.2020 23:16:28
+Error Message: Type provided must be an Enum.
+Parameter name: enumType
+Stack Trace:    at System.RuntimeType.GetEnumValues()
+   at System.Enum.GetValues(Type enumType)
+   at PcapPacketModifier.Logic.UserExperience.TextDisplayer.PrintEnumValues(Type enums) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\UserExperience\TextDisplayer.cs:line 136
+END
+
+Date: 15.02.2020 23:18:28
+Error Message: Exception has been thrown by the target of an invocation.
+Stack Trace:    at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.RuntimeType.CreateInstanceImpl(BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, StackCrawlMark& stackMark)
+   at System.Activator.CreateInstance(Type type, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
+   at System.Activator.CreateInstance(Type type, Object[] args)
+   at PcapPacketModifier.Logic.Factories.GenericInstanceCreator.TryCreateNewInstance[T](Object[] input) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\Factories\GenericInstanceCreator.cs:line 36
+END
+
+Date: 15.02.2020 23:29:28
+Error Message: Exception has been thrown by the target of an invocation.
+Stack Trace:    at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.RuntimeType.CreateInstanceImpl(BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, StackCrawlMark& stackMark)
+   at System.Activator.CreateInstance(Type type, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
+   at System.Activator.CreateInstance(Type type, Object[] args)
+   at PcapPacketModifier.Logic.Factories.GenericInstanceCreator.TryCreateNewInstance[T](Object[] input) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\Factories\GenericInstanceCreator.cs:line 36
+END
+
+Date: 15.02.2020 23:29:39
+Error Message: Exception has been thrown by the target of an invocation.
+Stack Trace:    at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.RuntimeType.CreateInstanceImpl(BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, StackCrawlMark& stackMark)
+   at System.Activator.CreateInstance(Type type, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
+   at System.Activator.CreateInstance(Type type, Object[] args)
+   at PcapPacketModifier.Logic.Factories.GenericInstanceCreator.TryCreateNewInstance[T](Object[] input) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\Factories\GenericInstanceCreator.cs:line 36
+END
+
+Date: 15.02.2020 23:47:11
+Error Message: Exception has been thrown by the target of an invocation.
+Stack Trace:    at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.RuntimeType.CreateInstanceImpl(BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, StackCrawlMark& stackMark)
+   at System.Activator.CreateInstance(Type type, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
+   at System.Activator.CreateInstance(Type type, Object[] args)
+   at PcapPacketModifier.Logic.Factories.GenericInstanceCreator.TryCreateNewInstance[T](Object[] input) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\Factories\GenericInstanceCreator.cs:line 36
+END
+
+Date: 15.02.2020 23:47:21
+Error Message: Exception has been thrown by the target of an invocation.
+Stack Trace:    at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.RuntimeType.CreateInstanceImpl(BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, StackCrawlMark& stackMark)
+   at System.Activator.CreateInstance(Type type, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
+   at System.Activator.CreateInstance(Type type, Object[] args)
+   at PcapPacketModifier.Logic.Factories.GenericInstanceCreator.TryCreateNewInstance[T](Object[] input) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\Factories\GenericInstanceCreator.cs:line 36
+END
+
+Date: 15.02.2020 23:51:32
+Error Message: Exception has been thrown by the target of an invocation.
+Stack Trace:    at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.RuntimeType.CreateInstanceImpl(BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, StackCrawlMark& stackMark)
+   at System.Activator.CreateInstance(Type type, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
+   at System.Activator.CreateInstance(Type type, Object[] args)
+   at PcapPacketModifier.Logic.Factories.GenericInstanceCreator.TryCreateNewInstance[T](Object[] input) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\Factories\GenericInstanceCreator.cs:line 36
+END
+
+Date: 15.02.2020 23:51:44
+Error Message: Exception has been thrown by the target of an invocation.
+Stack Trace:    at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.RuntimeType.CreateInstanceImpl(BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, StackCrawlMark& stackMark)
+   at System.Activator.CreateInstance(Type type, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
+   at System.Activator.CreateInstance(Type type, Object[] args)
+   at PcapPacketModifier.Logic.Factories.GenericInstanceCreator.TryCreateNewInstance[T](Object[] input) in C:\Users\MSi\source\repos\PcapModifier\PcapModifier\PcapPacketModifier.Logic\Factories\GenericInstanceCreator.cs:line 36
+END

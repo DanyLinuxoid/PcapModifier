@@ -1,5 +1,4 @@
-﻿using PcapDotNet.Packets;
-using PcapPacketModifier.Userdata.Packets;
+﻿using PcapDotNet.Packets.IpV4;
 using PcapPacketModifier.Userdata.Packets.Interfaces;
 
 namespace PcapPacketModifier.Logic.Packets.Interfaces
@@ -10,12 +9,12 @@ namespace PcapPacketModifier.Logic.Packets.Interfaces
     public interface IPacketManager
     {
         /// <summary>
-        /// Extracts layers from provided packet
+        /// Extracts data from provided packet
         /// </summary>
-        /// <param name="packet">Packet to extract layers from</param>
-        /// <returns>Retusn packet with new layers</returns>
-        INewPacket ExtractLayersFromPacket(Packet packet);
-
+        /// <param name="protocol">Protocol to get packet by</param>
+        /// <returns>Returns new Packet object with extracted layers</returns>
+        INewPacket GetPacketByProtocol(IpV4Protocol protocol);
+        
         /// <summary>
         /// Sends provided paket count to ip and mac address which is set in packet
         /// </summary>
@@ -28,5 +27,13 @@ namespace PcapPacketModifier.Logic.Packets.Interfaces
         /// </summary>
         /// <param name="packet">Packet to forward</param>
         void InterceptAndForwardPackets(Userdata.User.UserInputData userInput);
+
+        /// <summary>
+        /// Copy packet modules from one to other
+        /// </summary>
+        /// <param name="toCopyFrom">Source packet to copy from</param>
+        /// <param name="toCopyTo">Packet to copy to</param>
+        /// <returns>Packet with copied modules</returns>
+        INewPacket CopyModifiedModulesFromModifiedPacketToNewPacket(INewPacket toCopyFrom, INewPacket toCopyTo);
     }
 }

@@ -15,7 +15,7 @@ namespace PcapPacketModifier.Logic.Packets.Models
     public class CustomIcmpPacket : CustomBasePacket
     {
         private readonly ILayerModifier _layerModifier;
-        private readonly ILayerExtractor _layerExtractor;
+        private readonly ILayerExchanger _layerExchanger;
 
         /// <summary>
         /// Icmp packet contains IpV4Layer
@@ -32,17 +32,19 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// </summary>
         public IcmpEchoLayer IcmpLayer{ get; set; }
 
-        public CustomIcmpPacket(ILayerModifier layerModifier, ILayerExtractor layerExtractor)
+        public CustomIcmpPacket(ILayerModifier layerModifier, 
+                                              ILayerExchanger layerExchanger)
         {
             _layerModifier = layerModifier;
-            _layerExtractor = layerExtractor;
+            _layerExchanger = layerExchanger;
+
         }
 
         /// <summary>
         /// Builds packet and seals it
         /// </summary>
         /// <returns>Builded packet</returns>
-        public override Packet BuildPacket(uint sequenceNumber)
+        public override Packet BuildPacket(bool isIncrementSeqNumber, uint sequenceNumber = 1)
         {
             EthernetLayer.EtherType = EthernetType.None;
             IcmpLayer.Checksum = null;
@@ -57,10 +59,9 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// <returns>Cusom packet with freshly extracted layers</returns>
         public override INewPacket ExtractLayers(Packet packet)
         {
-            this.EthernetLayer = _layerExtractor.ExtractEthernetLayerFromPacket(packet);
-            this.IpV4Layer = _layerExtractor.ExtractIpv4LayerFromPacket(packet);
-            this.IcmpLayer = _layerExtractor.ExtractIcmpLayerFromPacket(packet);
-
+            this.EthernetLayer = packet.Ethernet.ExtractLayer() as EthernetLayer;
+            this.IpV4Layer = packet.Ethernet.IpV4.ExtractLayer() as IpV4Layer;
+            this.IcmpLayer = packet.Ethernet.IpV4.Icmp.ExtractLayer() as IcmpEchoLayer;
             return this;
         }
 
@@ -73,6 +74,21 @@ namespace PcapPacketModifier.Logic.Packets.Models
             this.IpV4Layer = _layerModifier.ModifyLayer(this.IpV4Layer);
             this.EthernetLayer = _layerModifier.ModifyLayer(this.EthernetLayer);
             this.IcmpLayer = _layerModifier.ModifyLayer(this.IcmpLayer);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Copies Modules from specified packet to current packet (if values are not default)
+        /// </summary>
+        /// <param name="toCopyFrom"></param>
+        /// <returns>New packet with copied values</returns>
+        public override INewPacket CopyModulesFrom(INewPacket source)
+        {
+            CustomIcmpPacket toCopyFrom = source as CustomIcmpPacket;
+            this.EthernetLayer = _layerExchanger.AssignUserValuesFromFilledLayerToOtherLayer(toCopyFrom.EthernetLayer, this.EthernetLayer);
+            this.IpV4Layer = _layerExchanger.AssignUserValuesFromFilledLayerToOtherLayer(toCopyFrom.IpV4Layer, this.IpV4Layer);
+            this.IcmpLayer = _layerExchanger.AssignUserValuesFromFilledLayerToOtherLayer(toCopyFrom.IcmpLayer, this.IcmpLayer);
 
             return this;
         }

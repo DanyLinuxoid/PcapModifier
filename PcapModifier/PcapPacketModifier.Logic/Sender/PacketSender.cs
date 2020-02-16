@@ -1,13 +1,15 @@
 ﻿using PcapDotNet.Core;
 using PcapDotNet.Packets;
-using PcapPacketModifier.Logic.Layers.Interfaces;
-using PcapPacketModifier.Logic.Modules.Interfaces;
+using PcapDotNet.Packets.IpV4;
+using PcapPacketModifier.Logic.Factories.Interfaces;
 using PcapPacketModifier.Logic.Sender.Interfaces;
 using PcapPacketModifier.Logic.Tools.Interfaces;
 using PcapPacketModifier.Logic.UserExperience.Interfaces;
 using PcapPacketModifier.Userdata.Packets.Interfaces;
+using PcapPacketModifier.Userdata.User;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace PcapPacketModifier.Logic.Sender
 {
@@ -15,35 +17,22 @@ namespace PcapPacketModifier.Logic.Sender
     {
         private readonly IUserExperience _userExperience;
         private readonly IFileHandler _fileHandler;
-        private readonly IModuleModifier _moduleModifier;
-        private readonly ILayerManager _layerManager;
+        private readonly IPacketFactory _packetFactory;
 
         /// <summary>
         /// List of devices registered on local machine
         /// </summary>
         private readonly IList<LivePacketDevice> _allDevices;
 
-        /// <summary>
-        /// Default path to dump file
-        /// </summary>
-        private readonly string _defaultPathToDumpFile;
-
         public PacketSender(IFileHandler fileHandler,
                                       IUserExperience userExperience,
-                                      IModuleModifier moduleModifier,
-                                      ILayerManager layerManager)
+                                      IPacketFactory packetFactory)
         {
             _fileHandler = fileHandler;
             _userExperience = userExperience;
-            _moduleModifier = moduleModifier;
-            _layerManager = layerManager;
+            _packetFactory = packetFactory;
 
             _allDevices = LivePacketDevice.AllLocalMachine;
-            _defaultPathToDumpFile = _fileHandler.PathProvider.GetDefaultPathForDumpFile();
-            if (!_fileHandler.IsFileExisting(_defaultPathToDumpFile))
-            {
-                _fileHandler.TryCreateSimpleEmptyFile(_defaultPathToDumpFile);
-            }
         }
 
         /// <summary>
@@ -62,18 +51,18 @@ namespace PcapPacketModifier.Logic.Sender
             if (_allDevices == null ||
                 _allDevices.Count == 0)
             {
-                throw new InvalidOperationException("No devices found on local machine");
+                throw new InvalidOperationException("No devices found on local machine to send packets with");
             }
 
             int userChosenDevice = LetUserChooseInterfaceBeforeWorkingWithPackets();
             PacketDevice selectedDevice = _allDevices[userChosenDevice - 1];
             using (PacketCommunicator communicator = selectedDevice.Open(65535,
-                                                                                                            PacketDeviceOpenAttributes.Promiscuous,
+                                                                                                            PacketDeviceOpenAttributes.NoCaptureLocal,
                                                                                                             1000))
             {
                 for (uint i = 0; i < countToSend; i++)
                 {
-                    communicator.SendPacket(packet.BuildPacket(0));
+                    communicator.SendPacket(packet.BuildPacket(true, i));
                     _userExperience.UserTextDisplayer.PrintText($"Sended packet nr {i + 1}...");
                     PauseBeforeSendingPacket(timeToWaitBeforeNextPacketToSend);
                 }
@@ -83,14 +72,31 @@ namespace PcapPacketModifier.Logic.Sender
         /// <summary>
         /// Intercepts and forwards packets to web
         /// </summary>
-        public void InterceptAndForwardPackets(Userdata.User.UserInputData userInput)
+        public void InterceptAndForwardPackets(UserInputData userInput)
         {
+            INewPacket packetToCopyFrom = default;
+            bool isAutoModifyPackets = false;
+            bool isFilterEnabled = false;
+            int packetCountGoneThroughDevice = 0;
             int selectedOutputDevice = LetUserChooseInterfaceBeforeWorkingWithPackets();
+
             PacketDevice device = _allDevices[selectedOutputDevice - 1]; // - 1 because of array
-            using (PacketCommunicator inputCommunicator = device.Open(65536, PacketDeviceOpenAttributes.Promiscuous, 1000))
+            using (PacketCommunicator inputCommunicator = device.Open(65535, PacketDeviceOpenAttributes.Promiscuous, 1000))
             {
-                using (PacketCommunicator outputCommunicator = device.Open(65536, PacketDeviceOpenAttributes.Promiscuous, 1000))
+                if (inputCommunicator.DataLink.Kind != DataLinkKind.Ethernet)
                 {
+                    _userExperience.UserTextDisplayer.PrintTextAndExit("Only ethernet networks are supported");
+                }
+
+                using (PacketCommunicator outputCommunicator = device.Open(65535, PacketDeviceOpenAttributes.Promiscuous, 1000))
+                {
+                    if (!string.IsNullOrWhiteSpace(userInput.PacketFilterProtocol))
+                    {
+                        inputCommunicator.SetFilter(userInput.PacketFilterProtocol.ToLower());
+                        outputCommunicator.SetFilter(userInput.PacketFilterProtocol.ToLower());
+                        isFilterEnabled = true;
+                    }
+
                     while (inputCommunicator.ReceivePacket(out Packet packet) != PacketCommunicatorReceiveResult.Eof)
                     {
                         if (packet == null)
@@ -98,39 +104,104 @@ namespace PcapPacketModifier.Logic.Sender
                             continue;
                         }
 
-                        if (Console.KeyAvailable) // Checks if user pressed key, and if user pressed, then does manipulation with packets
+                        if (packetCountGoneThroughDevice > 10) // for hint to be seen always, and not to cause too much mess in console
+                        {
+                            _userExperience.UserTextDisplayer.ClearConsole();
+                            _userExperience.UserTextDisplayer.PrintText("-M to modify one packet");
+                            _userExperience.UserTextDisplayer.PrintText("-A to automatically modify packets");
+                            _userExperience.UserTextDisplayer.PrintText("-P to pause");
+                            packetCountGoneThroughDevice = 0;
+                        }
+
+                        _userExperience.UserTextDisplayer.ShowPacketBaseInfo(packet);
+                        if (Console.KeyAvailable) // if user pressed key, then does manipulation with packets
                         {
                             ConsoleKeyInfo choice = Console.ReadKey(true);
                             switch (choice.Key)
                             {
-                                case ConsoleKey.A:
-                                    // In progress
+                                case ConsoleKey.A: // modify every packet using user saved settings if filter is enabled
+                                    if (isFilterEnabled)
+                                    {
+                                        packetToCopyFrom = GetPacketFilledWithUserValuesToCopyFrom(packet.Ethernet.IpV4.Protocol, userInput.IsSendPacket);
+                                        isAutoModifyPackets = (packetToCopyFrom != null);
+                                    }
+                                    else
+                                    {
+                                        _userExperience.UserTextDisplayer.PrintText("NOTE: You can't automodify packets without protocol filtering");
+                                    }
                                     break;
-                                case ConsoleKey.M:
-                                    packet = _layerManager.ExtractLayersFromPacketAndReturnNewPacket(packet).ModifyLayers().BuildPacket();
+
+                                case ConsoleKey.M: // modify one packet in normal way
+                                    packet = _packetFactory.GetPacketByProtocol(packet.Ethernet.IpV4.Protocol).ModifyLayers().BuildPacket(true, 0);
+                                    break;
+
+                                case ConsoleKey.P:
+                                    _userExperience.UserTextDisplayer.PrintText("PAUSED");
+                                    _userExperience.UserInputHandler.WaitForUserToPressKey();
                                     break;
                             }
                         }
 
-                        if (userInput.PacketFilterProtocol != default)
+                        if (isAutoModifyPackets)
                         {
-                            if (userInput.PacketFilterProtocol == packet.Ethernet.IpV4.Protocol)
+                            Packet autoModifiedPacket = AutoModifyPacket(packet, packetToCopyFrom);
+                            if (autoModifiedPacket != null)
                             {
-                                _userExperience.UserTextDisplayer.ShowPacketBaseInfo(packet);
+                                packet = autoModifiedPacket;
                             }
                         }
-                        else // if filter is disabled
+
+                        if (userInput.IsUserWantsToSavePacket)
                         {
-                            _userExperience.UserTextDisplayer.ShowPacketBaseInfo(packet);
+                            _fileHandler.TrySaveOnePacketToDisk(packet);
                         }
 
-                        if (userInput.IsSendOnePacket)
+                        if (userInput.IsSendPacket)
                         {
                             outputCommunicator.SendPacket(packet);
                         }
+
+                        packetCountGoneThroughDevice++;
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Automodifies packet for further sending
+        /// </summary>
+        /// <param name="toCopyTo">Packet to copy to user values</param>
+        /// <param name="packetToCopyFrom">Packet to copy from</param>
+        /// <returns>Packet with user values, that can be sended to web</returns>
+        private Packet AutoModifyPacket(Packet toCopyTo, INewPacket packetToCopyFrom)
+        {
+            // replaces 'Packet' with modifiable custom packet, so it would be possible to swap layers/modules
+            INewPacket packetToCopyTo = _packetFactory.GetPacketByProtocol(toCopyTo.Ethernet.IpV4.Protocol).ExtractLayers(toCopyTo);
+
+            return packetToCopyTo != null
+                    ? packetToCopyTo.CopyModulesFrom(packetToCopyFrom).BuildPacket(false)
+                    : null;
+        }
+
+        /// <summary>
+        /// Gets user packet with values to copy from to other packets
+        /// </summary>
+        /// <param name="isFilteringByProtocolEnabled">If filtering is enabled, then autosending is possible</param>
+        /// <returns>New packet with ONLY user values in it, all other values are set to default state</returns>
+        private INewPacket GetPacketFilledWithUserValuesToCopyFrom(IpV4Protocol ipV4Protocol, bool isSendingEnabled)
+        {
+            INewPacket packetWithUserValuesToModify = _packetFactory.GetPacketByProtocol(ipV4Protocol)
+                .ModifyLayers(); // Give user default packet to fill with his values, so we would know, what values to modify in all other packets
+
+            _userExperience.UserTextDisplayer.PrintText("Now all packets will be modified according to changed values in new packet, press any key to continue...");
+            if (!isSendingEnabled)
+            {
+                _userExperience.UserTextDisplayer.PrintText("NOTE: Packet sending is disabled, modified packets will NOT be sended!");
+            }
+
+            Console.ReadKey();
+
+            return packetWithUserValuesToModify;
         }
 
         /// <summary>
@@ -151,7 +222,7 @@ namespace PcapPacketModifier.Logic.Sender
         }
 
         /// <summary>
-        /// Do pause before sending any packet again (if needed)
+        /// Do pause in milliseconds before sending any packet again 
         /// </summary>
         private void PauseBeforeSendingPacket(int timeToWait)
         {

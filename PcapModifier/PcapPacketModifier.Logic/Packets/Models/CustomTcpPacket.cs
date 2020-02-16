@@ -15,7 +15,7 @@ namespace PcapPacketModifier.Logic.Packets.Models
     public class CustomTcpPacket : CustomBasePacket
     {
         private readonly ILayerModifier _layerModifier;
-        private readonly ILayerExtractor _layerExtractor;
+        private readonly ILayerExchanger _layerExchanger;
 
         /// <summary>
         /// Tcp packet contains IpV4Layer
@@ -37,20 +37,25 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// </summary>
         public TcpLayer TcpLayer { get; set; }
 
-        public CustomTcpPacket(ILayerModifier layerModifier, ILayerExtractor layerExtractor)
+        public CustomTcpPacket(ILayerModifier layerModifier, 
+                                           ILayerExchanger layerExchanger)
         {
             _layerModifier = layerModifier;
-            _layerExtractor = layerExtractor;
+            _layerExchanger = layerExchanger;
         }
 
         /// <summary>
         /// Builds packet and seals it
         /// </summary>
         /// <returns>Builded packet</returns>
-        public override Packet BuildPacket(uint sequenceNumber)
+        public override Packet BuildPacket(bool isIncrementSeqNumber, uint sequenceNumber = 0)
         {
-            TcpLayer.SequenceNumber = sequenceNumber;
-            TcpLayer.AcknowledgmentNumber = sequenceNumber + 1;
+            if (isIncrementSeqNumber)
+            {
+                TcpLayer.SequenceNumber = sequenceNumber;
+                TcpLayer.AcknowledgmentNumber = sequenceNumber;
+            }
+
             EthernetLayer.EtherType = EthernetType.None;
             TcpLayer.Checksum = null;
             return new PacketBuilder(this.EthernetLayer, this.IpV4Layer, this.TcpLayer, this.PayloadLayer).Build(DateTime.Now);
@@ -63,10 +68,10 @@ namespace PcapPacketModifier.Logic.Packets.Models
         /// <returns>Cusom packet with freshly extracted layers</returns>
         public override INewPacket ExtractLayers(Packet packet)
         {
-            this.EthernetLayer = _layerExtractor.ExtractEthernetLayerFromPacket(packet);
-            this.TcpLayer = _layerExtractor.ExtractTcpLayerFromPacket(packet);
-            this.IpV4Layer = _layerExtractor.ExtractIpv4LayerFromPacket(packet);
-            this.PayloadLayer = _layerExtractor.ExtractPayloadLayerFromPacket(packet);
+            this.EthernetLayer = packet.Ethernet.ExtractLayer() as EthernetLayer;
+            this.TcpLayer = packet.Ethernet.IpV4.Tcp.ExtractLayer() as TcpLayer;
+            this.IpV4Layer = packet.Ethernet.IpV4.ExtractLayer() as IpV4Layer;
+            this.PayloadLayer = packet.Ethernet.Payload.ExtractLayer() as PayloadLayer;
 
             return this;
         }
@@ -81,6 +86,22 @@ namespace PcapPacketModifier.Logic.Packets.Models
             this.IpV4Layer = _layerModifier.ModifyLayer(this.IpV4Layer);
             this.PayloadLayer = _layerModifier.ModifyLayer(this.PayloadLayer);
             this.EthernetLayer = _layerModifier.ModifyLayer(this.EthernetLayer);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Copies Modules from specified packet to current packet (if values are not default)
+        /// </summary>
+        /// <param name="toCopyFrom"></param>
+        /// <returns>New packet with copied values</returns>
+        public override INewPacket CopyModulesFrom(INewPacket source)
+        {
+            CustomTcpPacket toCopyFrom = source as CustomTcpPacket;
+            this.TcpLayer = _layerExchanger.AssignUserValuesFromFilledLayerToOtherLayer(toCopyFrom.TcpLayer, this.TcpLayer);
+            this.EthernetLayer = _layerExchanger.AssignUserValuesFromFilledLayerToOtherLayer(toCopyFrom.EthernetLayer, this.EthernetLayer);
+            this.PayloadLayer = _layerExchanger.AssignUserValuesFromFilledLayerToOtherLayer(toCopyFrom.PayloadLayer, this.PayloadLayer);
+            this.IpV4Layer = _layerExchanger.AssignUserValuesFromFilledLayerToOtherLayer(toCopyFrom.IpV4Layer, this.IpV4Layer);
 
             return this;
         }

@@ -25,6 +25,11 @@ namespace PcapPacketModifier.Logic.UserExperience.Interfaces
         void ExitConsole();
 
         /// <summary>
+        /// Waits for key to be pressed
+        /// </summary>
+        void ReadKey();
+
+        /// <summary>
         /// Writes text to console
         /// </summary>
         /// <param name="text">Text to write</param>

@@ -101,5 +101,19 @@ namespace PcapPacketModifier.Logic.UserExperience.Interfaces
         /// Displays small hint message while interception is in progress
         /// </summary>
         void DisplayHintWhileInterceptionIsInProgress();
+
+        /// <summary>
+        /// Prints items in list
+        /// </summary>
+        /// <typeparam name="T">Type of items in list</typeparam>
+        /// <param name="listItems">List with items</param>
+        void PrintItemsInList<T>(List<T> listItems);
+
+        /// <summary>
+        /// Write text according to count
+        /// </summary>
+        /// <param name="text">Text to write</param>
+        /// <param name="count">Count to write</param>
+        void PrintOneLineManyTimes(string text, int count);
     }
 }

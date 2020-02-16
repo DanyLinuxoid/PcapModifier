@@ -35,6 +35,14 @@ namespace PcapPacketModifier.Logic.UserExperience
         }
 
         /// <summary>
+        /// Waits for key to be pressed
+        /// </summary>
+        public void ReadKey()
+        {
+            Console.ReadKey();
+        }
+
+        /// <summary>
         /// Writes text to console
         /// </summary>
         /// <param name="text">Text to write</param>

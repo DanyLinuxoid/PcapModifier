@@ -21,6 +21,13 @@ namespace PcapPacketModifier.Userdata.Packets.Interfaces
         /// Builds new packet
         /// </summary>
         /// <returns>New builded packet</returns>
-        Packet BuildPacket(uint sequenceNumber = 1);
+        Packet BuildPacket(bool isIncrementSeqNumber, uint sequenceNumber = 1);
+
+        /// <summary>
+        /// Copies Modules from specified packet to current packet (if values are not default)
+        /// </summary>
+        /// <param name="toCopyFrom"></param>
+        /// <returns>New packet with copied values</returns>
+        INewPacket CopyModulesFrom(INewPacket toCopyFrom);
     }
 }
