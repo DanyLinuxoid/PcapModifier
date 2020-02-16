@@ -1,5 +1,5 @@
 # PcapModifier 
-Alpha 0.9
+Beta 0.95
 
 Program gives ability to read offline packet with '.pcap' extension (wireshark), intercept packets and modify packets in offline mode or on the fly (if intercepting), capable of sending packets to Web.
 For now program can:
@@ -9,3 +9,4 @@ For now program can:
 4. Send packet as many times as user wishes to web (simply resend it, or send after modifying).
 5. Dynamically intercept packets and see it's decrypted contents 
 6. Dynamically modify packet in interception process
+7. Automatically modify all received packets during interception process by injecting user provided values
