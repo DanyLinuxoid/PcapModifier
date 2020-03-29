@@ -10,3 +10,5 @@ For now program can:
 5. Dynamically intercept packets and see it's decrypted contents 
 6. Dynamically modify packet in interception process
 7. Automatically modify all received packets during interception process by injecting user provided values
+
+Program has very strange bug, possibly related to legacy framework that is used ---- packets are sended twice and are being received twice as well, no known fix, there was no issue found in code. Maybe it is just environment bug.
