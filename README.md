@@ -11,4 +11,7 @@ For now program can:
 6. Dynamically modify packet in interception process
 7. Automatically modify all received packets during interception process by injecting user provided values
 
-Program has very strange bug, possibly related to legacy framework that is used ---- packets are sended twice and are being received twice as well, no known fix, there was no issue found in code. Maybe it is just environment bug.
+# Issues
+Program has very strange bug, which is possibly related to legacy framework that is used =>
+Packets are sended twice and are received twice as well, because of this issue, replay attack or simple "intercept-modify-resend" is not working well, as packet id's are duplicated and it break whole packet chain.
+There was no issue found in program code. Could be environment issue...
