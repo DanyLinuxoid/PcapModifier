@@ -13,5 +13,5 @@ For now program can:
 
 # Issues
 Program has very strange bug, which is possibly related to legacy framework that is used =>
-Packets are sended twice and are received twice as well, because of this issue, replay attack or simple "intercept-modify-resend" is not working well, as packet id's are duplicated and it break whole packet chain.
+Packets are sended twice and are received twice as well, because of this issue, replay attack or simple "intercept-modify-resend" is not working well, as packet id's are duplicated and it breaks whole packet chain.
 There was no issue found in program code. Could be environment issue...
