@@ -201,8 +201,8 @@ namespace PcapPacketModifier.Logic.UserExperience
         {
             int userChosenDevice = 0;
             int.TryParse(GetUserInput(), out userChosenDevice);
-            int correctedDeviceNumber = userChosenDevice - 1; // -1 because of array
-            if (!(correctedDeviceNumber <= 0) && !(correctedDeviceNumber > allDevices.Count))
+            int correctedDeviceNumber = userChosenDevice;
+            if (!(correctedDeviceNumber < 0) && !(correctedDeviceNumber > allDevices.Count))
             {
                 return userChosenDevice;
             }

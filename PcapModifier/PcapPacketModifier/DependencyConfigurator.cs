@@ -23,6 +23,7 @@ namespace PcapPacketModifier
             }
 
             RegisterClases(GetClases(), container);
+            container.Register<IProgramManager, ProgramManager>();
         }
 
         /// <summary>
@@ -32,11 +33,11 @@ namespace PcapPacketModifier
         private static IEnumerable<Type> GetClases()
         {
             return typeof(PacketManager).Assembly.GetExportedTypes().
-            Where(type => type.Namespace != null && type.Namespace.StartsWith("PcapPacketModifier.Logic", StringComparison.Ordinal)).
-            Where(type => type.GetInterfaces().Length > 0).
-            Where(type => !type.IsGenericType).
-            Where(type => !type.IsEnum).
-            Where(type => !type.IsAbstract);
+                Where(type => type.Namespace != null && type.Namespace.StartsWith("PcapPacketModifier.Logic", StringComparison.Ordinal)).
+                Where(type => type.GetInterfaces().Length > 0).
+                Where(type => !type.IsGenericType).
+                Where(type => !type.IsEnum).
+                Where(type => !type.IsAbstract);
         }
 
         /// <summary>
