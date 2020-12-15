@@ -10,8 +10,3 @@ For now program can:
 5. Dynamically intercept packets and see it's decrypted contents 
 6. Dynamically modify packet in interception process
 7. Automatically modify all received packets during interception process by injecting user provided values
-
-# Issues
-Program has very strange bug, which is possibly related to legacy framework that is used =>
-Packets are sended twice and are received twice as well, because of this issue, replay attack or simple "intercept-modify-resend" is not working well, as packet id's are duplicated and it breaks whole packet chain.
-There was no issue found in program code. Could be environment issue...
